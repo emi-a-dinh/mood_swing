@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -20,21 +23,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.zybooks.moodswing.R
 import kotlinx.coroutines.delay
+import androidx.compose.material3.TopAppBar
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
     val homeScreenPhotos = listOf(R.drawable.steak1, R.drawable.steak2, R.drawable.steak3)
     val listState = rememberLazyListState()
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Welcome to MoodSwing!", style = MaterialTheme.typography.headlineMedium)
-        Text("Swipe delicious moods!", style = MaterialTheme.typography.bodyLarge)
-    }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -55,6 +51,20 @@ fun HomeScreen(viewModel: HomeViewModel) {
             )
         }
     }
+
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Welcome to MoodSwing!", style = MaterialTheme.typography.headlineMedium)
+        Text("Swipe delicious moods!", style = MaterialTheme.typography.bodyLarge)
+    }
+
+
+
+
 
 }
 
