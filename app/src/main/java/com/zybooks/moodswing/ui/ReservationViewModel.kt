@@ -1,22 +1,17 @@
 package com.zybooks.moodswing.ui
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import java.time.LocalDate
-import java.time.LocalTime
+import androidx.lifecycle.ViewModel
 
-class ReservationViewModel {
+class ReservationViewModel : ViewModel() {
+
+    val guestCount = mutableStateOf(1)
+
+    // Add seating location
+    val selectedSeating = mutableStateOf<String?>(null)
+
+    // Add sample availability
+    val availableSeatingOptions = listOf("Main Dining", "Outdoor", "Bar", "Private Booth")
 
 
-    // Time slots by meal type
-    // val lunchSlots = mutableStateListOf<TimeSlot>()
-    // val dinnerSlots = mutableStateListOf<TimeSlot>()
-
-    // Reservation details
-    val selectedDate = mutableStateOf<LocalDate?>(null)
-    val selectedTime = mutableStateOf<LocalTime?>(null)
-    val guestSize = mutableStateOf(1)
-
-    // Submission status
-    val isSubmitting = mutableStateOf(false)
 }
