@@ -1,19 +1,14 @@
 package com.zybooks.moodswing.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -31,12 +26,6 @@ sealed class Routes {
     data object Home
 
     @Serializable
-    data object Messages
-
-    @Serializable
-    data object Favorites
-
-    @Serializable
     data object Menu
 
     @Serializable
@@ -49,83 +38,42 @@ sealed class Routes {
     data object Settings
 }
 
-enum class AppScreen(val route: Any, val title: String, val icon: ImageVector) {
+enum class AppScreen(
+    val route: Any,
+    val title: String,
+    val icon: ImageVector
+) {
     HOME(Routes.Home, "Home", Icons.Default.Home),
-    MESSAGES(Routes.Messages, "Messages", Icons.Default.Email),
-    FAVORITES(Routes.Favorites, "Favorites", Icons.Default.Favorite)
+    MENU(Routes.Menu, "Menu", Icons.Default.Menu),
+    RESERVATION(Routes.Reservation, "Reserve", Icons.Default.Place),
+    REWARDS(Routes.Rewards, "Rewards", Icons.Default.Star),
+    SETTINGS(Routes.Settings, "Settings", Icons.Default.Settings)
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MoodSwingApp(modifier: Modifier = Modifier){
-
+fun MoodSwingApp() {
     val navController = rememberNavController()
-
-    NavHost(
-        navController = navController,
-        startDestination = Routes.Home
-    ) {
-        composable<Routes.Home> {
-            HomeScreen(HomeViewModel())
-        }
-        composable<Routes.Menu> {
-            MenuScreen(MenuViewModel())
-        }
-        composable<Routes.Reservation> {
-            ReservationScreen(ReservationViewModel())
-        }
-        composable<Routes.Rewards> {
-            RewardsScreen(RewardsViewModel())
-        }
-        composable<Routes.Settings> {
-            SettingsScreen(SettingsViewModel())
-        }
-    }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Menu") }
-            )
+            TopAppBar(title = { Text("MoodSwing Restaurant") })
         },
         bottomBar = {
-            BottomAppBar (modifier = Modifier.fillMaxWidth()) {
-                IconButton(onClick = { /* Handle info click */ }) {
-                    Icon(
-                        imageVector = Icons.Filled.Home,
-                        contentDescription = "Home"
-                    )
-                }
-                IconButton(onClick = { /* Handle notifications click */ }) {
-                    Icon(
-                        imageVector = Icons.Filled.Menu,
-                        contentDescription = "Menu"
-                    )
-                }
-                IconButton(onClick = { /* Handle notifications click */ }) {
-                    Icon(
-                        imageVector = Icons.Filled.Star,
-                        contentDescription = "Rewards"
-                    )
-                }
-                IconButton(onClick = { /* Handle notifications click */ }) {
-                    Icon(
-                        imageVector = Icons.Filled.Place,
-                        contentDescription = "Reserve"
-                    )
-                }
-                IconButton(onClick = { /* Handle notifications click */ }) {
-                    Icon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = "Settings"
-                    )
-                }
-
-            }
+            BottomNavBar(navController)
         }
-    ) {
-        // Content goes here, no inner padding handling needed
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Routes.Home,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable<Routes.Home> { HomeScreen(viewModel = HomeViewModel()) }
+            composable<Routes.Menu> { MenuScreen(viewModel = MenuViewModel()) }
+            composable<Routes.Reservation> { ReservationScreen(viewModel = ReservationViewModel()) }
+            composable<Routes.Rewards> { RewardsScreen(viewModel = RewardsViewModel()) }
+            composable<Routes.Settings> { SettingsScreen(viewModel = SettingsViewModel()) }
+        }
     }
 }
-
