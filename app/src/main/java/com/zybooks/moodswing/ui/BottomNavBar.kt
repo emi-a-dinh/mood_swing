@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
-
 @Composable
 fun BottomNavBar(navController: NavController) {
     val backStackEntry by navController.currentBackStackEntryAsState()

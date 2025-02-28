@@ -50,8 +50,9 @@ enum class AppScreen(
     SETTINGS(Routes.Settings, "Settings", Icons.Default.Settings)
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+
 @OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun MoodSwingApp() {
     val navController = rememberNavController()
