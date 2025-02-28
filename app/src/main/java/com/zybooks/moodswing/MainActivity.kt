@@ -11,7 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.zybooks.moodswing.ui.MoodSwingApp
+import com.zybooks.moodswing.ui.HomeScreen
+import com.zybooks.moodswing.ui.HomeViewModel
+import com.zybooks.moodswing.ui.MenuScreen
+import com.zybooks.moodswing.ui.MenuViewModel
+import com.zybooks.moodswing.ui.ReservationScreen
+import com.zybooks.moodswing.ui.ReservationViewModel
 import com.zybooks.moodswing.ui.theme.MoodSwingTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,7 +29,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MoodSwingApp()
+                    ReservationScreen(
+                        viewModel = ReservationViewModel()
+                    )
                 }
             }
         }
