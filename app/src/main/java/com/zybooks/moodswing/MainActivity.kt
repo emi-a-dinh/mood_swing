@@ -15,6 +15,7 @@ import com.zybooks.moodswing.ui.HomeScreen
 import com.zybooks.moodswing.ui.HomeViewModel
 import com.zybooks.moodswing.ui.MenuScreen
 import com.zybooks.moodswing.ui.MenuViewModel
+import com.zybooks.moodswing.ui.MoodSwingApp
 import com.zybooks.moodswing.ui.ReservationScreen
 import com.zybooks.moodswing.ui.ReservationViewModel
 import com.zybooks.moodswing.ui.theme.MoodSwingTheme
@@ -29,9 +30,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ReservationScreen(
-                        viewModel = ReservationViewModel()
-                    )
+                    MoodSwingApp()
                 }
             }
         }
