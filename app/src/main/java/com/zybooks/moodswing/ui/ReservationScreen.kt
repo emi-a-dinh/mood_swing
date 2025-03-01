@@ -2,7 +2,6 @@ package com.zybooks.moodswing.ui
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,12 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -39,6 +38,19 @@ import java.util.Locale
 @Composable
 fun ReservationScreen(viewModel: ReservationViewModel) {
     Column(horizontalAlignment = Alignment.CenterHorizontally){
+
+        Text(
+            text = "Hello,",
+            style = MaterialTheme.typography.displayLarge,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = "Let's get you a reservation.",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.Gray,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
         Text("How many people?", style = MaterialTheme.typography.headlineSmall)
         GuestCounter(
             guestCount = viewModel.guestCount.value,
@@ -50,13 +62,12 @@ fun ReservationScreen(viewModel: ReservationViewModel) {
             modifier = Modifier.padding(8.dp)
         ) {
             item{
-
-            DatePickerComponent()}
+                DatePickerComponent()}
             item{
-            TimePickerComponent()}
-
-
-    }}
+                TimePickerComponent()}
+        }
+        AvailableTimesSection(viewModel)
+    }
 
 
 }
@@ -175,3 +186,52 @@ fun GuestCounter(guestCount: Int, onCountChanged: (Int) -> Unit) {
         }
     }
 }
+
+@Composable
+fun AvailableTimesSection(viewModel: ReservationViewModel) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "Available Times",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+
+        // Example: Lunch Period
+        Text(text = "Lunch", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+        LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.padding(vertical = 8.dp)) {
+            items(viewModel.availableSeatingOptions) { seating ->
+                TimeCard(timeLabel = "12:30 PM", seatingLocation = seating)
+            }
+        }
+
+        // Example: Dinner Period
+        Text(text = "Dinner", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+        LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.padding(vertical = 8.dp)) {
+            items(viewModel.availableSeatingOptions) { seating ->
+                TimeCard(timeLabel = "5:30 PM", seatingLocation = seating)
+            }
+        }
+    }
+}
+
+@Composable
+fun TimeCard(timeLabel: String, seatingLocation: String) {
+    OutlinedButton(
+        onClick = { /* Handle reservation selection */ },
+        shape = RoundedCornerShape(8.dp),
+        border = BorderStroke(1.dp, Color.Gray),
+        modifier = Modifier.padding(4.dp).fillMaxWidth()
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(text = timeLabel, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+            Text(
+                text = seatingLocation,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray,
+                modifier = Modifier.padding(top=4.dp)
+            )
+        }
+    }
+}
+
