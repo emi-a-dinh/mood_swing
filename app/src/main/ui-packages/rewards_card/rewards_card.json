@@ -1,0 +1,729 @@
+{
+  "name": "rewards_card",
+  "version": 33,
+  "source-key": {
+    "type": "figma",
+    "file": "KxEXXEsCqZYCs7c7MCg59e",
+    "node": "2012:1287",
+    "version": "2190661168987325012",
+    "component-id": "e91f0b6ad26bcb75df7ca69a78e392fcd06b4179"
+  },
+  "default": "Rewards Card",
+  "documentation": "reward card v2, labeled all the items and pictures",
+  "design": {
+    "atoms": [
+      {
+        "type": "group",
+        "id": "top_level",
+        "root": "true"
+      },
+      {
+        "type": "text",
+        "id": "Reward_Title"
+      },
+      {
+        "type": "group",
+        "id": "steak_7"
+      },
+      {
+        "type": "group",
+        "id": "steak_8"
+      },
+      {
+        "type": "group",
+        "id": "steak_9"
+      },
+      {
+        "type": "group",
+        "id": "steak_10"
+      },
+      {
+        "type": "group",
+        "id": "steak_1"
+      },
+      {
+        "type": "group",
+        "id": "steak_2"
+      },
+      {
+        "type": "group",
+        "id": "steak_3"
+      },
+      {
+        "type": "group",
+        "id": "steak_4"
+      },
+      {
+        "type": "group",
+        "id": "steak_5"
+      },
+      {
+        "type": "group",
+        "id": "steak_6"
+      },
+      {
+        "type": "text",
+        "id": "Description"
+      },
+      {
+        "type": "group",
+        "id": "empty steak"
+      },
+      {
+        "type": "image",
+        "id": "empty_steak"
+      },
+      {
+        "type": "group",
+        "id": "empty steak1"
+      },
+      {
+        "type": "image",
+        "id": "empty_steak1"
+      },
+      {
+        "type": "group",
+        "id": "empty steak2"
+      },
+      {
+        "type": "image",
+        "id": "empty_steak2"
+      },
+      {
+        "type": "group",
+        "id": "empty steak3"
+      },
+      {
+        "type": "image",
+        "id": "empty_steak3"
+      },
+      {
+        "type": "image",
+        "id": "filled_steak"
+      },
+      {
+        "type": "image",
+        "id": "filled_steak1"
+      },
+      {
+        "type": "image",
+        "id": "filled_steak2"
+      },
+      {
+        "type": "image",
+        "id": "filled_steak3"
+      },
+      {
+        "type": "image",
+        "id": "filled_steak4"
+      },
+      {
+        "type": "image",
+        "id": "filled_steak5"
+      }
+    ],
+    "modes": {
+      "Rewards Card": {
+        "rules": [
+          {
+            "id": "top_level",
+            "is-structured": false,
+            "children": [
+              "Reward_Title",
+              "steak_7",
+              "steak_8",
+              "steak_9",
+              "steak_10",
+              "steak_1",
+              "steak_2",
+              "steak_3",
+              "steak_4",
+              "steak_5",
+              "steak_6",
+              "Description"
+            ],
+            "background-color": {
+              "alpha": 1.0,
+              "hue": 0.0,
+              "saturation": 0.0,
+              "value": 1.0
+            }
+          },
+          {
+            "id": "Reward_Title",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 23.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 16.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 434.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 62.0
+              }
+            },
+            "font-weight": 600.0,
+            "text-content": "Reward\n",
+            "overflow": "visible",
+            "max-lines": -1,
+            "text-align": "left",
+            "text-align-vertical": "center",
+            "text-size": 24.0,
+            "letter-spacing": 0.10000000149011612,
+            "line-height": 1.3333332824707032,
+            "typeface": "Klee One"
+          },
+          {
+            "id": "steak_7",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 87.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 156.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 60.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 50.0
+              }
+            },
+            "is-structured": false,
+            "children": [
+              "empty steak"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "steak_8",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 155.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 156.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 60.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 50.0
+              }
+            },
+            "is-structured": false,
+            "children": [
+              "empty steak1"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "steak_9",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 224.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 156.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 60.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 50.0
+              }
+            },
+            "is-structured": false,
+            "children": [
+              "empty steak2"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "steak_10",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 293.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 156.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 60.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 50.0
+              }
+            },
+            "is-structured": false,
+            "children": [
+              "empty steak3"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "steak_1",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 17.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 90.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 88.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 72.0
+              }
+            },
+            "is-structured": false,
+            "children": [
+              "filled_steak"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "steak_2",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 86.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 92.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 88.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 72.0
+              }
+            },
+            "is-structured": false,
+            "children": [
+              "filled_steak1"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "steak_3",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 155.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 95.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 88.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 72.0
+              }
+            },
+            "is-structured": false,
+            "children": [
+              "filled_steak2"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "steak_4",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 222.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 95.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 88.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 72.0
+              }
+            },
+            "is-structured": false,
+            "children": [
+              "filled_steak3"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "steak_5",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 293.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 95.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 88.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 72.0
+              }
+            },
+            "is-structured": false,
+            "children": [
+              "filled_steak4"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "steak_6",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 17.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 156.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 88.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 72.0
+              }
+            },
+            "is-structured": false,
+            "children": [
+              "filled_steak5"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "Description",
+            "alignment": {
+              "horizontal": {
+                "attachment": "start",
+                "offset": 23.0
+              },
+              "vertical": {
+                "attachment": "start",
+                "offset": 41.0
+              }
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "fixed",
+                "value": 300.0
+              },
+              "height-constraints": {
+                "sizing-mode": "fixed",
+                "value": 46.0
+              }
+            },
+            "font-weight": 600.0,
+            "text-content": "Spend a minimum of $50 and earn a punch",
+            "overflow": "visible",
+            "max-lines": -1,
+            "text-align": "left",
+            "text-align-vertical": "center",
+            "letter-spacing": 0.10000000149011612,
+            "line-height": 1.4285714721679688,
+            "typeface": "Klee One"
+          },
+          {
+            "id": "empty steak",
+            "is-structured": false,
+            "children": [
+              "empty_steak"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "empty_steak",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "image-content": "$empty_steak",
+            "scale": "cover"
+          },
+          {
+            "id": "empty steak1",
+            "is-structured": false,
+            "children": [
+              "empty_steak1"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "empty_steak1",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "image-content": "empty_steak.png",
+            "scale": "cover"
+          },
+          {
+            "id": "empty steak2",
+            "is-structured": false,
+            "children": [
+              "empty_steak2"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "empty_steak2",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "image-content": "empty_steak.png",
+            "scale": "cover"
+          },
+          {
+            "id": "empty steak3",
+            "is-structured": false,
+            "children": [
+              "empty_steak3"
+            ],
+            "clip-content": false
+          },
+          {
+            "id": "empty_steak3",
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "image-content": "empty_steak.png",
+            "scale": "cover"
+          },
+          {
+            "id": "filled_steak",
+            "margin": {
+              "right": 25.756099700927734,
+              "bottom": 23.14285659790039
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "image-content": "filled_steak.png",
+            "scale": "cover"
+          },
+          {
+            "id": "filled_steak1",
+            "margin": {
+              "right": 25.756099700927734,
+              "bottom": 23.14285659790039
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "image-content": "filled_steak.png",
+            "scale": "cover"
+          },
+          {
+            "id": "filled_steak2",
+            "margin": {
+              "right": 25.756099700927734,
+              "bottom": 23.14285659790039
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "image-content": "filled_steak.png",
+            "scale": "cover"
+          },
+          {
+            "id": "filled_steak3",
+            "margin": {
+              "right": 25.756099700927734,
+              "bottom": 23.14285659790039
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "image-content": "filled_steak.png",
+            "scale": "cover"
+          },
+          {
+            "id": "filled_steak4",
+            "margin": {
+              "right": 25.756099700927734,
+              "bottom": 23.14285659790039
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "image-content": "filled_steak.png",
+            "scale": "cover"
+          },
+          {
+            "id": "filled_steak5",
+            "margin": {
+              "right": 25.756099700927734,
+              "bottom": 23.14285659790039
+            },
+            "size-constraints": {
+              "width-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              },
+              "height-constraints": {
+                "sizing-mode": "proportional",
+                "value": 1.0
+              }
+            },
+            "image-content": "filled_steak.png",
+            "scale": "cover"
+          }
+        ]
+      }
+    }
+  },
+  "parameters": {
+    "empty_steak": {
+      "data-type": "image",
+      "required": false,
+      "description": "empty_steak"
+    }
+  },
+  "previews": [
+    {
+      "design": "Rewards Card",
+      "size": {
+        "width": 371.0,
+        "height": 241.0
+      },
+      "parameters": {
+        "empty_steak": "empty_steak.png"
+      }
+    }
+  ],
+  "adin-component-search-paths": [],
+  "image-search-paths": [],
+  "vector-search-paths": []
+}

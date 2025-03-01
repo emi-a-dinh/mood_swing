@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zybooks.moodswing.R
-import com.zybooks.moodswing.rewardscard.RewardsCard
+
 
 @Composable
 fun RewardsScreen(viewModel: RewardsViewModel) {
