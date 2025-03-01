@@ -33,12 +33,20 @@ fun HomeScreen(viewModel: HomeViewModel) {
     val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
+        var nextIndex = 0;
         while (true) {
             delay(3000) // Auto-scroll every 3 seconds
-            val nextIndex = (listState.firstVisibleItemIndex + 1) % homeScreenPhotos.size
-            listState.animateScrollToItem(nextIndex)
+            nextIndex = nextIndex + 1;
+
+            if (nextIndex == homeScreenPhotos.size) {
+                listState.scrollToItem(0) // Instantly reset to the first image
+                nextIndex = 0;
+            } else {
+                listState.animateScrollToItem(nextIndex)
+            }
         }
     }
+
 
     LazyRow(state = listState) {
         items(homeScreenPhotos) { imageRes ->
