@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -35,15 +38,26 @@ import java.util.Locale
 
 @Composable
 fun ReservationScreen(viewModel: ReservationViewModel) {
-    Column {
+    Column(horizontalAlignment = Alignment.CenterHorizontally){
         Text("How many people?", style = MaterialTheme.typography.headlineSmall)
         GuestCounter(
             guestCount = viewModel.guestCount.value,
             onCountChanged = { newCount -> viewModel.guestCount.value = newCount }
         )
-        DatePickerComponent()
-        TimePickerComponent()
-    }
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+
+            modifier = Modifier.padding(8.dp)
+        ) {
+            item{
+
+            DatePickerComponent()}
+            item{
+            TimePickerComponent()}
+
+
+    }}
+
 
 }
 
@@ -76,8 +90,8 @@ fun DatePickerComponent() {
             onClick = { showDatePicker.value = true },
             shape = RoundedCornerShape(8.dp),
             border = BorderStroke(1.dp, Color.Gray),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
-            modifier = Modifier.fillMaxWidth()
+//            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+            modifier = Modifier.width(190.dp)
         ) {
             Text(text = selectedDate.value, fontSize = 16.sp)
             Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
@@ -122,8 +136,8 @@ fun TimePickerComponent() {
             onClick = { showTimePicker.value = true },
             shape = RoundedCornerShape(8.dp),
             border = BorderStroke(1.dp, Color.Gray),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
-            modifier = Modifier.fillMaxWidth()
+//            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+            modifier = Modifier.width(190.dp)
         ) {
             Text(text = selectedTime.value, fontSize = 16.sp)
             Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "Dropdown")
