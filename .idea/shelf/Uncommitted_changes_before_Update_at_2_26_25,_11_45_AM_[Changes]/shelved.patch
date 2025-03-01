@@ -1,0 +1,184 @@
+Index: app/src/main/java/com/zybooks/moodswing/ui/MoodSwingApp.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zybooks.moodswing.ui\n\nimport android.annotation.SuppressLint\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.material.icons.Icons\nimport androidx.compose.material3.Icon\nimport androidx.compose.material.icons.filled.Email\nimport androidx.compose.material.icons.filled.Favorite\nimport androidx.compose.material.icons.filled.Home\nimport androidx.compose.material.icons.filled.Menu\nimport androidx.compose.material.icons.filled.Place\nimport androidx.compose.material.icons.filled.Settings\nimport androidx.compose.material.icons.filled.Star\nimport androidx.compose.material3.BottomAppBar\nimport androidx.compose.material3.ExperimentalMaterial3Api\nimport androidx.compose.material3.IconButton\nimport androidx.compose.material3.Scaffold\nimport androidx.compose.material3.Text\nimport androidx.compose.material3.TopAppBar\nimport androidx.compose.runtime.Composable\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.graphics.vector.ImageVector\nimport androidx.navigation.compose.rememberNavController\nimport kotlinx.serialization.Serializable\n\n\nsealed class Routes {\n    @Serializable\n    data object Home\n\n    @Serializable\n    data object Messages\n\n    @Serializable\n    data object Favorites\n}\n\nenum class AppScreen(val route: Any, val title: String, val icon: ImageVector) {\n    HOME(Routes.Home, \"Home\", Icons.Default.Home),\n    MESSAGES(Routes.Messages, \"Messages\", Icons.Default.Email),\n    FAVORITES(Routes.Favorites, \"Favorites\", Icons.Default.Favorite)\n}\n\n@SuppressLint(\"UnusedMaterial3ScaffoldPaddingParameter\")\n@OptIn(ExperimentalMaterial3Api::class)\n@Composable\nfun MoodSwingApp(modifier: Modifier = Modifier){\n\n    val navController = rememberNavController()\n\n    Scaffold(\n        topBar = {\n            TopAppBar(\n                title = { Text(\"Menu\") }\n            )\n        },\n        bottomBar = {\n            BottomAppBar (modifier = Modifier.fillMaxWidth()) {\n                IconButton(onClick = { /* Handle info click */ }) {\n                    Icon(\n                        imageVector = Icons.Filled.Home,\n                        contentDescription = \"Home\"\n                    )\n                }\n                IconButton(onClick = { /* Handle notifications click */ }) {\n                    Icon(\n                        imageVector = Icons.Filled.Menu,\n                        contentDescription = \"Menu\"\n                    )\n                }\n                IconButton(onClick = { /* Handle notifications click */ }) {\n                    Icon(\n                        imageVector = Icons.Filled.Star,\n                        contentDescription = \"Rewards\"\n                    )\n                }\n                IconButton(onClick = { /* Handle notifications click */ }) {\n                    Icon(\n                        imageVector = Icons.Filled.Place,\n                        contentDescription = \"Reserve\"\n                    )\n                }\n                IconButton(onClick = { /* Handle notifications click */ }) {\n                    Icon(\n                        imageVector = Icons.Filled.Settings,\n                        contentDescription = \"Settings\"\n                    )\n                }\n\n            }\n        }\n    ) {\n        // Content goes here, no inner padding handling needed\n    }\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/zybooks/moodswing/ui/MoodSwingApp.kt b/app/src/main/java/com/zybooks/moodswing/ui/MoodSwingApp.kt
+--- a/app/src/main/java/com/zybooks/moodswing/ui/MoodSwingApp.kt	(revision 8e3f35d10a6abbc2a712d87682588d8bdf89cc7c)
++++ b/app/src/main/java/com/zybooks/moodswing/ui/MoodSwingApp.kt	(date 1740460594363)
+@@ -3,7 +3,6 @@
+ import android.annotation.SuppressLint
+ import androidx.compose.foundation.layout.fillMaxWidth
+ import androidx.compose.material.icons.Icons
+-import androidx.compose.material3.Icon
+ import androidx.compose.material.icons.filled.Email
+ import androidx.compose.material.icons.filled.Favorite
+ import androidx.compose.material.icons.filled.Home
+@@ -13,6 +12,7 @@
+ import androidx.compose.material.icons.filled.Star
+ import androidx.compose.material3.BottomAppBar
+ import androidx.compose.material3.ExperimentalMaterial3Api
++import androidx.compose.material3.Icon
+ import androidx.compose.material3.IconButton
+ import androidx.compose.material3.Scaffold
+ import androidx.compose.material3.Text
+@@ -21,17 +21,16 @@
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.graphics.vector.ImageVector
+ import androidx.navigation.compose.rememberNavController
+-import kotlinx.serialization.Serializable
+ 
+ 
+ sealed class Routes {
+-    @Serializable
++    @kotlinx.serialization.Serializable
+     data object Home
+ 
+-    @Serializable
++    @kotlinx.serialization.Serializable
+     data object Messages
+ 
+-    @Serializable
++    @kotlinx.serialization.Serializable
+     data object Favorites
+ }
+ 
+Index: app/build.gradle.kts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\n    alias(libs.plugins.android.application)\n    alias(libs.plugins.kotlin.android)\n    alias(libs.plugins.kotlin.compose)\n}\n\nandroid {\n    namespace = \"com.zybooks.moodswing\"\n    compileSdk = 35\n\n    defaultConfig {\n        applicationId = \"com.zybooks.moodswing\"\n        minSdk = 24\n        targetSdk = 35\n        versionCode = 1\n        versionName = \"1.0\"\n\n        testInstrumentationRunner = \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            isMinifyEnabled = false\n            proguardFiles(\n                getDefaultProguardFile(\"proguard-android-optimize.txt\"),\n                \"proguard-rules.pro\"\n            )\n        }\n    }\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_11\n        targetCompatibility = JavaVersion.VERSION_11\n    }\n    kotlinOptions {\n        jvmTarget = \"11\"\n    }\n    buildFeatures {\n        compose = true\n    }\n}\n\ndependencies {\n\n    implementation(\"org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2\")\n    implementation(libs.androidx.core.ktx)\n    implementation(libs.androidx.lifecycle.runtime.ktx)\n    implementation(libs.androidx.activity.compose)\n    implementation(platform(libs.androidx.compose.bom))\n    implementation(libs.androidx.ui)\n    implementation(libs.androidx.ui.graphics)\n    implementation(libs.androidx.ui.tooling.preview)\n    implementation(libs.androidx.material3)\n    implementation(libs.androidx.navigation.compose)\n    testImplementation(libs.junit)\n    androidTestImplementation(libs.androidx.junit)\n    androidTestImplementation(libs.androidx.espresso.core)\n    androidTestImplementation(platform(libs.androidx.compose.bom))\n    androidTestImplementation(libs.androidx.ui.test.junit4)\n    debugImplementation(libs.androidx.ui.tooling)\n    debugImplementation(libs.androidx.ui.test.manifest)\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+--- a/app/build.gradle.kts	(revision 8e3f35d10a6abbc2a712d87682588d8bdf89cc7c)
++++ b/app/build.gradle.kts	(date 1740459560079)
+@@ -51,6 +51,7 @@
+     implementation(libs.androidx.ui.tooling.preview)
+     implementation(libs.androidx.material3)
+     implementation(libs.androidx.navigation.compose)
++    implementation(libs.places)
+     testImplementation(libs.junit)
+     androidTestImplementation(libs.androidx.junit)
+     androidTestImplementation(libs.androidx.espresso.core)
+Index: app/src/main/java/com/zybooks/moodswing/ui/ReservationScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/zybooks/moodswing/ui/ReservationScreen.kt b/app/src/main/java/com/zybooks/moodswing/ui/ReservationScreen.kt
+new file mode 100644
+--- /dev/null	(date 1740460451600)
++++ b/app/src/main/java/com/zybooks/moodswing/ui/ReservationScreen.kt	(date 1740460451600)
+@@ -0,0 +1,40 @@
++package com.zybooks.moodswing.ui
++
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.padding
++import androidx.compose.material3.Button
++import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.unit.dp
++
++
++@Composable
++fun ReservationScreen(viewModel: ReservationViewModel) {
++    Column {
++        Text("How many people?", style = MaterialTheme.typography.headlineSmall)
++        GuestCounter(
++            guestCount = viewModel.guestCount.value,
++            onCountChanged = { newCount -> viewModel.guestCount.value = newCount }
++        )
++    }
++
++}
++
++@Composable
++fun GuestCounter(guestCount: Int, onCountChanged: (Int) -> Unit) {
++    Row(verticalAlignment = Alignment.CenterVertically) {
++        Button(onClick = { if(guestCount > 1) onCountChanged(guestCount - 1) }) {
++            Text("-")
++        }
++
++        Text("$guestCount people", modifier = Modifier.padding(16.dp))
++
++        Button(onClick = { onCountChanged(guestCount + 1) }) {
++            Text("+")
++        }
++    }
++}
+Index: gradle/libs.versions.toml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>[versions]\nagp = \"8.8.0\"\nkotlin = \"2.0.0\"\ncoreKtx = \"1.15.0\"\njunit = \"4.13.2\"\njunitVersion = \"1.2.1\"\nespressoCore = \"3.6.1\"\nlifecycleRuntimeKtx = \"2.8.7\"\nactivityCompose = \"1.10.0\"\ncomposeBom = \"2024.04.01\"\nnavigationCompose = \"2.8.7\"\n\n[libraries]\nandroidx-core-ktx = { group = \"androidx.core\", name = \"core-ktx\", version.ref = \"coreKtx\" }\njunit = { group = \"junit\", name = \"junit\", version.ref = \"junit\" }\nandroidx-junit = { group = \"androidx.test.ext\", name = \"junit\", version.ref = \"junitVersion\" }\nandroidx-espresso-core = { group = \"androidx.test.espresso\", name = \"espresso-core\", version.ref = \"espressoCore\" }\nandroidx-lifecycle-runtime-ktx = { group = \"androidx.lifecycle\", name = \"lifecycle-runtime-ktx\", version.ref = \"lifecycleRuntimeKtx\" }\nandroidx-activity-compose = { group = \"androidx.activity\", name = \"activity-compose\", version.ref = \"activityCompose\" }\nandroidx-compose-bom = { group = \"androidx.compose\", name = \"compose-bom\", version.ref = \"composeBom\" }\nandroidx-ui = { group = \"androidx.compose.ui\", name = \"ui\" }\nandroidx-ui-graphics = { group = \"androidx.compose.ui\", name = \"ui-graphics\" }\nandroidx-ui-tooling = { group = \"androidx.compose.ui\", name = \"ui-tooling\" }\nandroidx-ui-tooling-preview = { group = \"androidx.compose.ui\", name = \"ui-tooling-preview\" }\nandroidx-ui-test-manifest = { group = \"androidx.compose.ui\", name = \"ui-test-manifest\" }\nandroidx-ui-test-junit4 = { group = \"androidx.compose.ui\", name = \"ui-test-junit4\" }\nandroidx-material3 = { group = \"androidx.compose.material3\", name = \"material3\" }\nandroidx-navigation-compose = { group = \"androidx.navigation\", name = \"navigation-compose\", version.ref = \"navigationCompose\" }\n\n[plugins]\nandroid-application = { id = \"com.android.application\", version.ref = \"agp\" }\nkotlin-android = { id = \"org.jetbrains.kotlin.android\", version.ref = \"kotlin\" }\nkotlin-compose = { id = \"org.jetbrains.kotlin.plugin.compose\", version.ref = \"kotlin\" }\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/gradle/libs.versions.toml b/gradle/libs.versions.toml
+--- a/gradle/libs.versions.toml	(revision 8e3f35d10a6abbc2a712d87682588d8bdf89cc7c)
++++ b/gradle/libs.versions.toml	(date 1740459560050)
+@@ -9,6 +9,7 @@
+ activityCompose = "1.10.0"
+ composeBom = "2024.04.01"
+ navigationCompose = "2.8.7"
++places = "4.1.0"
+ 
+ [libraries]
+ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+@@ -26,6 +27,7 @@
+ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+ androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+ androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
++places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
+ 
+ [plugins]
+ android-application = { id = "com.android.application", version.ref = "agp" }
+Index: app/src/main/java/com/zybooks/moodswing/ui/ReservationViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.zybooks.moodswing.ui\n\nimport androidx.compose.runtime.mutableStateListOf\nimport androidx.compose.runtime.mutableStateOf\nimport java.time.LocalDate\nimport java.time.LocalTime\n\nclass ReservationViewModel {\n\n\n    // Time slots by meal type\n    // val lunchSlots = mutableStateListOf<TimeSlot>()\n    // val dinnerSlots = mutableStateListOf<TimeSlot>()\n\n    // Reservation details\n    val selectedDate = mutableStateOf<LocalDate?>(null)\n    val selectedTime = mutableStateOf<LocalTime?>(null)\n    val guestSize = mutableStateOf(1)\n\n    // Submission status\n    val isSubmitting = mutableStateOf(false)\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/zybooks/moodswing/ui/ReservationViewModel.kt b/app/src/main/java/com/zybooks/moodswing/ui/ReservationViewModel.kt
+--- a/app/src/main/java/com/zybooks/moodswing/ui/ReservationViewModel.kt	(revision 8e3f35d10a6abbc2a712d87682588d8bdf89cc7c)
++++ b/app/src/main/java/com/zybooks/moodswing/ui/ReservationViewModel.kt	(date 1740460168764)
+@@ -1,22 +1,17 @@
+ package com.zybooks.moodswing.ui
+ 
+-import androidx.compose.runtime.mutableStateListOf
+ import androidx.compose.runtime.mutableStateOf
+-import java.time.LocalDate
+-import java.time.LocalTime
++import androidx.lifecycle.ViewModel
+ 
+-class ReservationViewModel {
++class ReservationViewModel : ViewModel() {
+ 
++    val guestCount = mutableStateOf(1)
+ 
+-    // Time slots by meal type
+-    // val lunchSlots = mutableStateListOf<TimeSlot>()
+-    // val dinnerSlots = mutableStateListOf<TimeSlot>()
++    // Add seating location
++    val selectedSeating = mutableStateOf<String?>(null)
+ 
+-    // Reservation details
+-    val selectedDate = mutableStateOf<LocalDate?>(null)
+-    val selectedTime = mutableStateOf<LocalTime?>(null)
+-    val guestSize = mutableStateOf(1)
++    // Add sample availability
++    val availableSeatingOptions = listOf("Main Dining", "Outdoor", "Bar", "Private Booth")
+ 
+-    // Submission status
+-    val isSubmitting = mutableStateOf(false)
+-}
+\ No newline at end of file
++
++}
