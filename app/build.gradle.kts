@@ -3,11 +3,14 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization")
+    alias(libs.plugins.google.relay)
 }
 
 android {
     namespace = "com.zybooks.moodswing"
     compileSdk = 35
+
+
 
     defaultConfig {
         applicationId = "com.zybooks.moodswing"
