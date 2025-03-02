@@ -26,13 +26,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MoodSwingTheme {
+            MoodSwingTheme (dynamicColor = false){
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    //MoodSwingApp()
-                    LoginScreen()
+                    MoodSwingApp()
+//                    LoginScreen()
                 }
             }
         }

@@ -18,10 +18,12 @@ import com.zybooks.moodswing.R
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +49,7 @@ fun LoginScreen(){
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginFields(){
     var username by remember { mutableStateOf("") }
@@ -61,7 +64,10 @@ fun LoginFields(){
             onValueChange = { username = it },
             label = { Text("Username") },
             singleLine = true,
-            modifier = Modifier.width(300.dp)
+            modifier = Modifier.width(300.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color.White
+            )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -71,7 +77,10 @@ fun LoginFields(){
             onValueChange = { password = it },
             label = { Text("Password") },
             singleLine = true,
-            modifier = Modifier.width(300.dp)
+            modifier = Modifier.width(300.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                containerColor = Color.White
+            )
         )
         Spacer(modifier = Modifier.height(24.dp))
 
