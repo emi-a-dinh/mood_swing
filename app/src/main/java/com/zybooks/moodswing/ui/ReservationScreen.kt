@@ -49,6 +49,7 @@ import java.util.Calendar
 import java.util.Locale
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ReservationScreen(viewModel: ReservationViewModel) {
     Column(horizontalAlignment = Alignment.CenterHorizontally){
@@ -190,7 +191,6 @@ fun TimePickerComponent(viewModel: ReservationViewModel) {
             onClick = { showTimePicker.value = true },
             shape = RoundedCornerShape(8.dp),
             border = BorderStroke(1.dp, Color.Gray),
-//            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
             modifier = Modifier.width(190.dp)
         ) {
             Text(text = selectedTime.value, fontSize = 16.sp)
@@ -202,7 +202,7 @@ fun TimePickerComponent(viewModel: ReservationViewModel) {
     if (showAlertDialog.value) {
         AlertDialog(
             title = { Text(text = "Invalid Time Selection") },
-            text = { Text(text = "Please select a time between 9:00 AM and 5:00 PM.") },
+            text = { Text(text = "Please select a time between 12:00 PM to 9:00 PM") },
             onDismissRequest = { showAlertDialog.value = false },
             confirmButton = {
                 Button(onClick = { showAlertDialog.value = false }) {
