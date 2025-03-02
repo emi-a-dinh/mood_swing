@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.zybooks.moodswing.ui.HomeScreen
 import com.zybooks.moodswing.ui.HomeViewModel
+import com.zybooks.moodswing.ui.LoginScreen
 import com.zybooks.moodswing.ui.MenuScreen
 import com.zybooks.moodswing.ui.MenuViewModel
 import com.zybooks.moodswing.ui.MoodSwingApp
@@ -30,7 +31,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MoodSwingApp()
+                    //MoodSwingApp()
+                    LoginScreen()
                 }
             }
         }
