@@ -1,16 +1,10 @@
 package com.zybooks.moodswing.ui
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.time.LocalDate
-import java.time.LocalTime
 
 class ReservationViewModel : ViewModel() {
     data class Reservation(val diningTime: String, val time: String, val date: String, val location: String, val guestCount : Int)
