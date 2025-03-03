@@ -1,5 +1,6 @@
 package com.zybooks.moodswing.ui
 
+import EditProfileScreen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -13,8 +14,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -35,6 +39,8 @@ sealed class Routes {
 
     @Serializable
     data object Settings
+
+
 }
 
 enum class AppScreen(
@@ -46,7 +52,9 @@ enum class AppScreen(
     MENU(Routes.Menu, "Menu", Icons.Default.Menu),
     RESERVATION(Routes.Reservation, "Reserve", Icons.Default.Place),
     REWARDS(Routes.Rewards, "Rewards", Icons.Default.Star),
-    SETTINGS(Routes.Settings, "Settings", Icons.Default.Settings)
+    SETTINGS(Routes.Settings, "Settings", Icons.Default.Settings),
+
+
 }
 
 
@@ -55,6 +63,8 @@ enum class AppScreen(
 @Composable
 fun MoodSwingApp() {
     val navController = rememberNavController()
+    val context = LocalContext.current
+    val appStorage = remember { AppStorage(context) }
 
     Scaffold(
         topBar = {
@@ -72,8 +82,25 @@ fun MoodSwingApp() {
             composable<Routes.Home> { HomeScreen(viewModel = HomeViewModel()) }
             composable<Routes.Menu> { MenuScreen(viewModel = MenuViewModel()) }
             composable<Routes.Reservation> { ReservationScreen(viewModel = ReservationViewModel()) }
-            composable<Routes.Rewards> { RewardsScreen(viewModel = RewardsViewModel()) }
-            composable<Routes.Settings> { SettingsScreen(viewModel = SettingsViewModel()) }
+            composable<Routes.Rewards> {
+                val viewModel = viewModel<RewardsViewModel>(
+                    factory = RewardsViewModelFactory(appStorage)
+                )
+                RewardsScreen(viewModel = viewModel)
+            }
+            composable<Routes.Settings> { SettingsScreen(
+                viewModel = SettingsViewModel(),
+                onEditProfileClick = { navController.navigate("edit_profile") },
+            ) }
+            composable("edit_profile") {
+                EditProfileScreen(
+                    viewModel = SettingsViewModel(),
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
         }
     }
 }

@@ -1,43 +1,26 @@
 package com.zybooks.moodswing.ui
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class SettingsViewModel {
+class SettingsViewModel : ViewModel() {
+    private val _pushNotificationsEnabled = MutableStateFlow(false)
+    val pushNotificationsEnabled: StateFlow<Boolean> = _pushNotificationsEnabled
 
-    // Profile Section
-    val userProfile = mutableStateOf<UserProfile?>(null)
-    val profilePictureUrl = mutableStateOf<String?>(null)
+    private val _firstName = MutableStateFlow("Default")
+    val firstName: StateFlow<String> = _firstName
 
-    // Account Security
-    val currentPassword = mutableStateOf("")
-    val newPassword = mutableStateOf("")
-    val confirmPassword = mutableStateOf("")
+    private val _lastName = MutableStateFlow("Name")
+    val lastName: StateFlow<String> = _lastName
 
-    // Payment Methods
-    val paymentMethods = mutableStateListOf<PaymentMethod>()
-    val selectedPaymentMethod = mutableStateOf<PaymentMethod?>(null)
-
-    // Preferences
-    val notificationsEnabled = mutableStateOf(true)
-    val darkModeEnabled = mutableStateOf(false)
-
-    // State Management
-    val isUpdatingProfile = mutableStateOf(false)
-    val settingsError = mutableStateOf<String?>(null)
-
-    data class PaymentMethod(
-        val id: String,
-        val cardLast4: String,
-        val expiration: String,
-        val type: CardType
-    ) {
-        enum class CardType { VISA, MASTERCARD, AMEX }
+    fun setPushNotificationsEnabled(enabled: Boolean) {
+        _pushNotificationsEnabled.value = enabled
     }
 
-    data class UserProfile(
-        val name: String,
-        val email: String,
-        val phone: String
-    )
+    fun updateName(firstName: String, lastName: String) {
+        _firstName.value = firstName
+        _lastName.value = lastName
+    }
 }
+

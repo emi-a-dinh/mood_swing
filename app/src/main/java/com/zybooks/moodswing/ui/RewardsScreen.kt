@@ -1,10 +1,8 @@
 package com.zybooks.moodswing.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.content.MediaType.Companion.Text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,14 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,7 +29,8 @@ import com.zybooks.moodswing.R
 
 @Composable
 fun RewardsScreen(viewModel: RewardsViewModel) {
-    var progress: Float by remember {mutableStateOf(.6f)}
+    val progress by viewModel.progress.collectAsState()
+    val rewardsCount by viewModel.rewardsCount.collectAsState()
 
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -42,8 +39,22 @@ fun RewardsScreen(viewModel: RewardsViewModel) {
         RewardProgressCircle(progress)
         Spacer(modifier = Modifier.padding(top = 32.dp))
         RewardSteakCard(progress)
-    }
 
+        // Add buttons to test functionality
+        Button(
+            onClick = { viewModel.addReward() },
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text("Add Punch")
+        }
+
+        Button(
+            onClick = { viewModel.resetRewards() },
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text("Reset Rewards")
+        }
+    }
 }
 
 @Composable
