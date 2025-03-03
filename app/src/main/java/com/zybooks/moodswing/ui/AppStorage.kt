@@ -34,12 +34,6 @@ class AppStorage(private val context: Context) {
         }
     }
 
-    // Get the current user ID from preferences
-    private suspend fun getCurrentUserId() {
-        return context.datastore.data.map { prefs ->
-            prefs[PreferenceKeys.CURRENT_USER_ID] ?: 0
-        }.collect { it }
-    }
 
     // Get preferences for a specific user
     fun getUserPreferencesFlow(userId: Int): Flow<AppPreferences> =

@@ -2,6 +2,8 @@ package com.zybooks.moodswing.ui
 
 import EditProfileScreen
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -58,6 +60,7 @@ enum class AppScreen(
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -88,16 +91,23 @@ fun MoodSwingApp() {
                 )
                 RewardsScreen(viewModel = viewModel)
             }
-            composable<Routes.Settings> { SettingsScreen(
-                viewModel = SettingsViewModel(),
-                onEditProfileClick = { navController.navigate("edit_profile") },
-            ) }
+            composable<Routes.Settings> {
+                val viewModel = viewModel<SettingsViewModel>(
+                    factory = SettingsViewModelFactory(appStorage)
+                )
+                SettingsScreen(
+                    viewModel = viewModel,
+                    onEditProfileClick = { navController.navigate("edit_profile") }
+                )
+            }
+
             composable("edit_profile") {
+                val viewModel = viewModel<SettingsViewModel>(
+                    factory = SettingsViewModelFactory(appStorage)
+                )
                 EditProfileScreen(
-                    viewModel = SettingsViewModel(),
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
+                    viewModel = viewModel,
+                    onBackClick = { navController.popBackStack() }
                 )
             }
 

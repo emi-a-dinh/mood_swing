@@ -1,26 +1,43 @@
 package com.zybooks.moodswing.ui
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class SettingsViewModel : ViewModel() {
-    private val _pushNotificationsEnabled = MutableStateFlow(false)
-    val pushNotificationsEnabled: StateFlow<Boolean> = _pushNotificationsEnabled
+class SettingsViewModel(private val appStorage: AppStorage) : ViewModel() {
+    private val _currentUserPrefs = MutableStateFlow(AppPreferences())
+    val currentUserPrefs: StateFlow<AppPreferences> = _currentUserPrefs
+    private val currentUserId get() = _currentUserPrefs.value.userId
 
-    private val _firstName = MutableStateFlow("Default")
-    val firstName: StateFlow<String> = _firstName
+    // Push notifications (global setting)
+    val pushNotificationsEnabled: StateFlow<Boolean> =
+        _currentUserPrefs.map { it.pushNotifications }.stateIn(
+            viewModelScope, SharingStarted.WhileSubscribed(), false
+        )
 
-    private val _lastName = MutableStateFlow("Name")
-    val lastName: StateFlow<String> = _lastName
+    init {
+        viewModelScope.launch {
+            appStorage.appPreferencesFlow.collectLatest { prefs ->
+                _currentUserPrefs.value = prefs
+            }
+        }
+    }
 
     fun setPushNotificationsEnabled(enabled: Boolean) {
-        _pushNotificationsEnabled.value = enabled
+        viewModelScope.launch {
+            appStorage.savePushNotifications(enabled)
+        }
     }
 
     fun updateName(firstName: String, lastName: String) {
-        _firstName.value = firstName
-        _lastName.value = lastName
+        viewModelScope.launch {
+            appStorage.updateUserProfile(currentUserId, firstName, lastName)
+        }
     }
 }
-

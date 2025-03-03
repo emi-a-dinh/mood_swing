@@ -96,8 +96,6 @@ fun CategorySelector(viewModel: MenuViewModel) {
     }
 }
 
-
-
 @Composable
 fun MenuCard(imageId: Int, item_name: String, item_desc: String) {
     OutlinedCard(

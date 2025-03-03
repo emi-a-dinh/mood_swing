@@ -35,9 +35,8 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel(),
     onEditProfileClick: () -> Unit
 ) {
+    val userPrefs by viewModel.currentUserPrefs.collectAsState()
     val pushNotificationsEnabled by viewModel.pushNotificationsEnabled.collectAsState()
-    val firstName by viewModel.firstName.collectAsState()
-    val lastName by viewModel.lastName.collectAsState()
 
     Column(
         modifier = Modifier
@@ -46,7 +45,7 @@ fun SettingsScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Profile Section
-        ProfileSection(firstName = firstName, lastName = lastName)
+        ProfileSection(firstName = userPrefs.firstName, lastName = userPrefs.lastName)
 
         // Account Settings Section
         Text("Account Settings", style = MaterialTheme.typography.titleMedium)

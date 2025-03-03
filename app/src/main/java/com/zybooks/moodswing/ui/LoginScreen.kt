@@ -48,7 +48,6 @@ fun LoginFields(){
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ){
@@ -86,5 +85,4 @@ fun LoginFields(){
         }
     }
 
-
-    }
+}

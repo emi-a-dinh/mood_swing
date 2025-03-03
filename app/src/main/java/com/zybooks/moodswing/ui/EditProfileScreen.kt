@@ -13,6 +13,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,8 +33,9 @@ fun EditProfileScreen(
     viewModel: SettingsViewModel,
     onBackClick: () -> Unit,
 ) {
-    var firstName by remember { mutableStateOf(viewModel.firstName.value) }
-    var lastName by remember { mutableStateOf(viewModel.lastName.value) }
+    val userPrefs by viewModel.currentUserPrefs.collectAsState()
+    var firstName by remember { mutableStateOf(userPrefs.firstName) }
+    var lastName by remember { mutableStateOf(userPrefs.lastName) }
 
     Column(
         modifier = Modifier
@@ -51,15 +53,12 @@ fun EditProfileScreen(
         )
 
         Spacer(modifier = Modifier.height(24.dp))
-
         OutlinedTextField(
             value = firstName,
             onValueChange = { firstName = it },
             label = { Text("First Name") },
             modifier = Modifier.fillMaxWidth()
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = lastName,
@@ -68,11 +67,10 @@ fun EditProfileScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
-
         Button(
             onClick = {
                 viewModel.updateName(firstName, lastName)
+                onBackClick()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
