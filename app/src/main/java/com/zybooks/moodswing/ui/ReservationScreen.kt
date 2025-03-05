@@ -39,7 +39,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -48,7 +50,7 @@ import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ReservationScreen(viewModel: ReservationViewModel) {
+fun ReservationScreen(viewModel: ReservationViewModel, navController: NavController) {
     Column(horizontalAlignment = Alignment.CenterHorizontally){
 
         Text(
@@ -81,10 +83,11 @@ fun ReservationScreen(viewModel: ReservationViewModel) {
                 DiningTypeComponent(viewModel)
             }
         }
-        AvailableTimesSection(viewModel)
+        AvailableTimesSection(viewModel, navController)
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DiningTypeComponent(viewModel: ReservationViewModel){
     var expanded by remember { mutableStateOf(false) }
@@ -112,28 +115,14 @@ fun DiningTypeComponent(viewModel: ReservationViewModel){
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DatePickerComponent(viewModel: ReservationViewModel) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
-    val dateFormatter = remember { SimpleDateFormat("EEE, MMM d'th'", Locale.getDefault()) }
-
-    val selectedDate = remember { mutableStateOf(dateFormatter.format(calendar.time)) }
+    val dateFormatter = remember { SimpleDateFormat("EEE, MMM d", Locale.getDefault()) }
     val showDatePicker = remember { mutableStateOf(false) }
-
-    if (showDatePicker.value) {
-        DatePickerDialog(
-            context,
-            { _, year, month, day ->
-                calendar.set(year, month, day)
-                viewModel.alterDate(dateFormatter.format(calendar.time))
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).show()
-        showDatePicker.value = false
-    }
+    val selectedDate by viewModel.selectedDate.collectAsState()
 
     Column (modifier = Modifier.fillMaxWidth()){
         Text(text = "Date", fontSize = 14.sp, fontWeight = FontWeight.Medium, )
@@ -144,43 +133,41 @@ fun DatePickerComponent(viewModel: ReservationViewModel) {
 //            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
             modifier = Modifier.width(190.dp)
         ) {
-            Text(text = selectedDate.value, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+            Text(text = selectedDate.format(DateTimeFormatter.ofPattern("EEE, MMM d")), fontSize = 12.sp, fontWeight = FontWeight.Medium)
             Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
         }
     }
+
+    if (showDatePicker.value) {
+        DatePickerDialog(
+            context,
+            { _, year, month, day ->
+                val pickedDate = LocalDate.of(year, month + 1, day)
+                viewModel.alterDate(pickedDate)
+            },
+            selectedDate.year,
+            selectedDate.monthValue - 1,
+            selectedDate.dayOfMonth
+        ).apply {
+            datePicker.maxDate = System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000)
+        }.show()
+        showDatePicker.value = false
+    }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimePickerComponent(viewModel: ReservationViewModel) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
-    val timeFormatter = remember { SimpleDateFormat("hh:mm a", Locale.getDefault()) }
+    val timeFormatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH)
 
-    val selectedTime = viewModel.time.collectAsState()
+    val selectedTime by viewModel.selectedTime.collectAsState()
     val showTimePicker = remember { mutableStateOf(false) }
     var showAlertDialog = remember { mutableStateOf(false) }
 
     val minHour = 12  // Earliest selectable hour (12:00 PM)
     val maxHour = 21 // Latest selectable hour (9:00 PM)
-
-    if (showTimePicker.value) {
-        TimePickerDialog(
-            context,
-            { _, hour, minute ->
-                if (hour in minHour..maxHour) {
-                    calendar.set(Calendar.HOUR_OF_DAY, hour)
-                    calendar.set(Calendar.MINUTE, minute)
-                    viewModel.alterTime(timeFormatter.format(calendar.time))
-                } else {
-                    showAlertDialog.value = true // Show AlertDialog for invalid time
-                }
-            },
-            calendar.get(Calendar.HOUR_OF_DAY),
-            calendar.get(Calendar.MINUTE),
-            false // Set to true for 24-hour format
-        ).show()
-        showTimePicker.value = false
-    }
 
     Column (modifier = Modifier.fillMaxWidth()){
         Text(text = "Time", fontSize = 14.sp, fontWeight = FontWeight.Medium)
@@ -190,11 +177,22 @@ fun TimePickerComponent(viewModel: ReservationViewModel) {
             border = BorderStroke(1.dp, Color.Gray),
             modifier = Modifier.width(190.dp)
         ) {
-            Text(text = selectedTime.value, fontSize = 16.sp)
+            Text(text = selectedTime.format(timeFormatter), fontSize = 16.sp)
             Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "Dropdown")
         }
     }
-
+    if (showTimePicker.value) {
+        TimePickerDialog(
+            context,
+            { _, hour, minute ->
+                viewModel.alterTime(LocalTime.of(hour, minute))
+            },
+            selectedTime.hour,
+            selectedTime.minute,
+            false // 12-hour format
+        ).show()
+        showTimePicker.value = false
+    }
     // AlertDialog for invalid time selection
     if (showAlertDialog.value) {
         AlertDialog(
@@ -236,12 +234,20 @@ fun parseTime(time: String): LocalTime {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AvailableTimesSection(viewModel: ReservationViewModel) {
+fun AvailableTimesSection(viewModel: ReservationViewModel, navController: NavController) {
     val availableReservations by viewModel.availableReservation.collectAsState()
-    val selectedDate = viewModel.date.collectAsState()
-    val selectedTime = viewModel.time.collectAsState()
-    val selectedDiningTime = viewModel.selectedDiningTime.collectAsState()
-    val diningTime = viewModel.selectedDiningTime.collectAsState().value == "All Day"
+    val selectedDate by viewModel.selectedDate.collectAsState()
+    val selectedTime by viewModel.selectedTime.collectAsState()
+    val selectedDiningType by viewModel.selectedDiningTime.collectAsState()
+
+    val filteredReservations = availableReservations.filter { reservation ->
+        val isDateMatch = reservation.dateTime.toLocalDate() == selectedDate
+        val isTimeMatch = reservation.dateTime.toLocalTime() >= selectedTime
+        val isDiningTypeMatch = selectedDiningType == "All Day" ||
+                reservation.diningTime == selectedDiningType
+
+        isDateMatch && isTimeMatch && isDiningTypeMatch
+    }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -251,62 +257,36 @@ fun AvailableTimesSection(viewModel: ReservationViewModel) {
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
-
-        val lunchReservations = availableReservations.filter { it.diningTime == "Lunch" && it.date == selectedDate.value && parseTime(it.time) >= parseTime(selectedTime.value)}
-        val dinnerReservations = availableReservations.filter { it.diningTime == "Dinner" && it.date == selectedDate.value && parseTime(it.time) >= parseTime(selectedTime.value)}
-
-
-        if (diningTime){
-            if (lunchReservations.isNotEmpty()) {
-                Text(text = "Lunch", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
-                LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.padding(vertical = 8.dp)) {
-                    items(lunchReservations) { reservation ->
-                        TimeCard(timeLabel = reservation.time, seatingLocation = reservation.location)
-                    }
-                }
-            }
-            if (dinnerReservations.isNotEmpty()){
-                Text(text = "Dinner", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
-                LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.padding(vertical = 8.dp)) {
-                    items(dinnerReservations) { reservation ->
-                        TimeCard(timeLabel = reservation.time, seatingLocation = reservation.location)
-                    }
-                }
-            }
-        }
-        else {
-            if (selectedDiningTime.value == "Lunch"){
-                Text(text = "Lunch", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
-                LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.padding(vertical = 8.dp)) {
-                    items(lunchReservations) { reservation ->
-                        TimeCard(timeLabel = reservation.time, seatingLocation = reservation.location)
-                    }
-                }
-            }
-            else{
-                Text(text = "Dinner", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
-                LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.padding(vertical = 8.dp)) {
-                    items(dinnerReservations) { reservation ->
-                        TimeCard(timeLabel = reservation.time, seatingLocation = reservation.location)
-                    }
+        if (filteredReservations.isEmpty()) {
+            Text("No available times for selected filters", color = Color.Gray)
+        } else {
+            LazyVerticalGrid(columns = GridCells.Fixed(3),
+                modifier = Modifier.padding(vertical = 8.dp)) {
+                items(filteredReservations) { reservation ->
+                    TimeCard(reservation, viewModel, navController)
                 }
             }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TimeCard(timeLabel: String, seatingLocation: String) {
+fun TimeCard(reservation: ReservationViewModel.Reservation, viewModel: ReservationViewModel, navController: NavController) {
     OutlinedButton(
-        onClick = { /* Handle reservation selection */ },
+        onClick = {
+            viewModel.setSelectedReservation(reservation)
+            //viewModel.scheduleReminder(reservation.dateTime)
+            navController.navigate("confirm_reservation")
+        },
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, Color.Gray),
         modifier = Modifier.padding(4.dp).fillMaxWidth()
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = timeLabel, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+            Text(text = reservation.displayTime, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
             Text(
-                text = seatingLocation,
+                text = reservation.location,
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray,
                 modifier = Modifier.padding(top=4.dp)

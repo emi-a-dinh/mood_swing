@@ -1,27 +1,77 @@
 package com.zybooks.moodswing.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
-class ReservationViewModel : ViewModel() {
-    data class Reservation(val diningTime: String, val time: String, val date: String, val location: String, val guestCount : Int)
+@RequiresApi(Build.VERSION_CODES.O)
+class ReservationViewModel(private val appStorage: AppStorage) : ViewModel() {
+
+    val currentReservation = appStorage.currentReservationFlow
+
+    data class Reservation(val diningTime: String, val dateTime: LocalDateTime, val location: String, val guestCount : Int) {
+        private val dateFormatter = DateTimeFormatter.ofPattern("EEE, MMM d", Locale.ENGLISH)
+        private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH)
+
+        val displayDate: String get() = dateTime.format(dateFormatter)
+        val displayTime: String get() = dateTime.format(timeFormatter)
+    }
+
+    fun scheduleReminder(reservationTime: LocalDateTime) {
+        viewModelScope.launch {
+            val reminderTime = reservationTime
+                .minusMinutes(30)
+                .atZone(ZoneId.systemDefault())
+                .toInstant().
+                toEpochMilli()
+
+            // Calculate 30 minutes before reservation
+            val delayMillis = reminderTime - System.currentTimeMillis()
+
+            if (delayMillis > 0) {
+                delay(delayMillis)
+                appStorage.showReservationReminder()
+            }
+        }
+    }
+    private val baseDate = LocalDateTime.now()
 
     private val _availableReservation = MutableStateFlow(listOf(
-        Reservation("Lunch", "12:00 PM", "Sun, Mar 2th", "Main Dining", 2),
-        Reservation("Lunch", "1:00 PM", "Sun, Mar 2th", "Outdoor", 2),
-        Reservation("Lunch", "1:30 PM", "Sun, Mar 2th", "Bar", 2),
-        Reservation("Lunch", "2:00 PM", "Sun, Mar 2th", "Private Booth", 2),
-        Reservation("Lunch", "2:00 PM", "Sun, Mar 2th", "Main Dining", 2),
-        Reservation("Dinner", "5:30 PM", "Sun, Mar 2th", "Main Dining", 2),
-        Reservation("Dinner", "6:00 PM", "Sun, Mar 2th", "Outdoor", 2),
-        Reservation("Dinner", "6:30 PM", "Sun, Mar 2th", "Bar", 2),
-        Reservation("Dinner", "7:00 PM", "Sun, Mar 2th", "Private Booth", 2),
-        Reservation("Dinner", "7:00 PM", "Sun, Mar 2th", "Main Dining", 2)
+        // Lunch times (12 PM - 2 PM)
+        Reservation("Lunch", baseDate.withHour(12).withMinute(0), "Main Dining", 2),
+        Reservation("Lunch", baseDate.withHour(13).withMinute(0), "Outdoor", 2), // 1 PM
+        Reservation("Lunch", baseDate.withHour(13).withMinute(30), "Bar", 2),    // 1:30 PM
+        Reservation("Lunch", baseDate.withHour(14).withMinute(0), "Private Booth", 2), // 2 PM
+
+        // Dinner times (5:30 PM - 7 PM)
+        Reservation("Dinner", baseDate.withHour(17).withMinute(30), "Main Dining", 2), // 5:30 PM
+        Reservation("Dinner", baseDate.withHour(18).withMinute(0), "Outdoor", 2),      // 6 PM
+        Reservation("Dinner", baseDate.withHour(18).withMinute(30), "Bar", 2),         // 6:30 PM
+        Reservation("Dinner", baseDate.withHour(19).withMinute(0), "Private Booth", 2) // 7 PM
     ))
 
+    fun saveReservation(reservation: Reservation) {
+        viewModelScope.launch {
+            // Get current user ID from storage
+            val userId = appStorage.appPreferencesFlow.first().userId
+            appStorage.saveReservation(userId, reservation)
+            scheduleReminder(reservation.dateTime)
+        }
+    }
 
     val availableReservation : StateFlow<List<Reservation>> = _availableReservation.asStateFlow()
 
@@ -42,24 +92,27 @@ class ReservationViewModel : ViewModel() {
         _guestCount.value += value
     }
 
+    private val _selectedTime = MutableStateFlow(LocalTime.now())
 
-    private val _time = MutableStateFlow("12:00 PM")
+    val selectedTime : StateFlow<LocalTime> = _selectedTime.asStateFlow()
 
-    val time : StateFlow<String> = _time.asStateFlow()
-
-
-    fun alterTime(value: String){
-        _time.value = value
+    fun alterTime(newTime: LocalTime){
+        _selectedTime.value = newTime
     }
 
-    private val _date = MutableStateFlow("Sun, Mar 2th")
-    val date : StateFlow<String> = _date.asStateFlow()
+    private val _selectedDate = MutableStateFlow(LocalDate.now())
+    val selectedDate : StateFlow<LocalDate> = _selectedDate.asStateFlow()
 
-    fun alterDate(value : String){
-        _date.value = value
+    fun alterDate(newDate : LocalDate){
+        _selectedDate.value = newDate
     }
 
+    private val _selectedReservation = MutableStateFlow<Reservation?>(null)
+    val selectedReservation: StateFlow<Reservation?> = _selectedReservation.asStateFlow()
 
+    fun setSelectedReservation(reservation: Reservation) {
+        _selectedReservation.value = reservation
+    }
     // Add seating location
     val selectedSeating = mutableStateOf<String?>(null)
 

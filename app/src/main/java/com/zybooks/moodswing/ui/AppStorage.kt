@@ -1,6 +1,12 @@
 package com.zybooks.moodswing.ui
 
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -8,8 +14,11 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.zybooks.moodswing.R
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import java.time.LocalDateTime
 
 
 data class AppPreferences (
@@ -24,9 +33,28 @@ class AppStorage(private val context: Context) {
     companion object {
         private val Context.datastore: DataStore<Preferences> by preferencesDataStore("app_storage")
 
+        private const val CHANNEL_ID_RESERVATION = "reservation_reminders"
+        private const val NOTIFICATION_ID = 100
+
+        private fun createNotificationChannel(context: Context) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                    CHANNEL_ID_RESERVATION,
+                    "Reservation Reminders",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description = "Reminders for upcoming reservations"
+                }
+
+                context.getSystemService(NotificationManager::class.java)
+                    ?.createNotificationChannel(channel)
+            }
+        }
+
         private object PreferenceKeys {
             val CURRENT_USER_ID = intPreferencesKey("current_user_id")
             val PUSH_NOTIFICATIONS = booleanPreferencesKey("push_notifications")
+            val CURRENT_RESERVATION = stringPreferencesKey("current_reservation")
 
             fun userFirstNameKey(userId: Int) = stringPreferencesKey("user_${userId}_first_name")
             fun userLastNameKey(userId: Int) = stringPreferencesKey("user_${userId}_last_name")
@@ -34,6 +62,47 @@ class AppStorage(private val context: Context) {
         }
     }
 
+    suspend fun saveReservation(userId: Int, reservation: ReservationViewModel.Reservation) {
+        context.datastore.edit { preferences ->
+            val reservationData = "${reservation.diningTime}|${reservation.dateTime}|${reservation.location}|${reservation.guestCount}"
+            preferences[PreferenceKeys.CURRENT_RESERVATION] = reservationData
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val currentReservationFlow: Flow<ReservationViewModel.Reservation?> =
+        context.datastore.data.map { preferences ->
+            preferences[PreferenceKeys.CURRENT_RESERVATION]?.let {
+                val parts = it.split("|")
+                ReservationViewModel.Reservation(
+                    diningTime = parts[0],
+                    dateTime = LocalDateTime.parse(parts[1]),
+                    location = parts[2],
+                    guestCount = parts[3].toInt()
+                )
+            }
+        }
+
+    @SuppressLint("ServiceCast")
+    suspend fun showReservationReminder() {
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Check if notifications are enabled in settings
+        val prefs = context.datastore.data.first()
+        val notificationsEnabled = prefs[PreferenceKeys.PUSH_NOTIFICATIONS] ?: false
+
+        if (notificationsEnabled) {
+            val notification = NotificationCompat.Builder(context, CHANNEL_ID_RESERVATION)
+                .setSmallIcon(R.drawable.default_pfp)
+                .setContentTitle("Check-In Reminder")
+                .setContentText("Check in within 30 minutes to keep your reservation!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .build()
+
+            notificationManager.notify(NOTIFICATION_ID, notification)
+        }
+    }
 
     // Get preferences for a specific user
     fun getUserPreferencesFlow(userId: Int): Flow<AppPreferences> =

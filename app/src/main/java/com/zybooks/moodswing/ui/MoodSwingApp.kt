@@ -41,8 +41,6 @@ sealed class Routes {
 
     @Serializable
     data object Settings
-
-
 }
 
 enum class AppScreen(
@@ -55,10 +53,7 @@ enum class AppScreen(
     RESERVATION(Routes.Reservation, "Reserve", Icons.Default.Place),
     REWARDS(Routes.Rewards, "Rewards", Icons.Default.Star),
     SETTINGS(Routes.Settings, "Settings", Icons.Default.Settings),
-
-
 }
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,7 +79,6 @@ fun MoodSwingApp() {
         ) {
             composable<Routes.Home> { HomeScreen(viewModel = HomeViewModel()) }
             composable<Routes.Menu> { MenuScreen(viewModel = MenuViewModel()) }
-            composable<Routes.Reservation> { ReservationScreen(viewModel = ReservationViewModel()) }
             composable<Routes.Rewards> {
                 val viewModel = viewModel<RewardsViewModel>(
                     factory = RewardsViewModelFactory(appStorage)
@@ -100,7 +94,6 @@ fun MoodSwingApp() {
                     onEditProfileClick = { navController.navigate("edit_profile") }
                 )
             }
-
             composable("edit_profile") {
                 val viewModel = viewModel<SettingsViewModel>(
                     factory = SettingsViewModelFactory(appStorage)
@@ -109,6 +102,20 @@ fun MoodSwingApp() {
                     viewModel = viewModel,
                     onBackClick = { navController.popBackStack() }
                 )
+            }
+// In MoodSwingApp.kt
+            composable<Routes.Reservation> {
+                val viewModel = viewModel<ReservationViewModel>(factory = ReservationViewModelFactory(appStorage))
+                ReservationScreen(viewModel, navController)
+            }
+
+            composable("confirm_reservation") {
+                val viewModel = viewModel<ReservationViewModel>(factory = ReservationViewModelFactory(appStorage))
+                ConfirmReservationScreen(viewModel, navController)
+            }
+
+            composable("reservation_confirmed") {
+                ReservationConfirmationScreen(navController)
             }
 
         }
