@@ -1,4 +1,4 @@
-package com.zybooks.moodswing.ui
+package com.zybooks.moodswing.ui.reservations
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.zybooks.moodswing.ui.Routes
 
 @Composable
 fun ReservationConfirmationScreen(navController: NavController) {

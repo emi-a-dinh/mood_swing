@@ -1,9 +1,10 @@
-package com.zybooks.moodswing.ui
+package com.zybooks.moodswing.ui.reservations
 
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.zybooks.moodswing.ui.AppStorage
 
 class ReservationViewModelFactory(private val appStorage: AppStorage) : ViewModelProvider.Factory {
     @RequiresApi(Build.VERSION_CODES.O)

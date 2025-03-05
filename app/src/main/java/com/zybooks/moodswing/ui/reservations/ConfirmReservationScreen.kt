@@ -1,4 +1,4 @@
-package com.zybooks.moodswing.ui
+package com.zybooks.moodswing.ui.reservations
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,17 +25,13 @@ fun ConfirmReservationScreen(
     viewModel: ReservationViewModel,
     navController: NavController
 ) {
-    val reservation by viewModel.selectedReservation.collectAsState()
+    val userPrefs by viewModel.currentUserPrefs.collectAsState()
+    val currentReservation = userPrefs.reservation
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        reservation?.let {
+        currentReservation?.let {
             // Display reservation details
-            Text("Confirm Reservation", style = MaterialTheme.typography.headlineMedium)
-            ReservationDetailItem("Date", it.displayDate)
-            ReservationDetailItem("Time", it.displayTime)
-            ReservationDetailItem("Location", it.location)
-            ReservationDetailItem("Party Size", "${it.guestCount} people")
-
+            ReservationDetailCard(it)
             Button(
                 onClick = {
                     viewModel.saveReservation(it)

@@ -1,34 +1,41 @@
-package com.zybooks.moodswing.ui
+package com.zybooks.moodswing.ui.reservations
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zybooks.moodswing.ui.AppPreferences
+import com.zybooks.moodswing.ui.AppStorage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 class ReservationViewModel(private val appStorage: AppStorage) : ViewModel() {
 
-    val currentReservation = appStorage.currentReservationFlow
+    private val _currentUserPrefs = MutableStateFlow(AppPreferences())
+    val currentUserPrefs: StateFlow<AppPreferences> = _currentUserPrefs
+    private val currentUserId get() = _currentUserPrefs.value.userId
 
-    data class Reservation(val diningTime: String, val dateTime: LocalDateTime, val location: String, val guestCount : Int) {
-        private val dateFormatter = DateTimeFormatter.ofPattern("EEE, MMM d", Locale.ENGLISH)
-        private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH)
+    init {
+        viewModelScope.launch {
+            appStorage.appPreferencesFlow.collectLatest { prefs ->
+                _currentUserPrefs.value = prefs
+            }
+        }
+    }
 
-        val displayDate: String get() = dateTime.format(dateFormatter)
-        val displayTime: String get() = dateTime.format(timeFormatter)
+    fun cancelReservation() {
+        viewModelScope.launch {
+            appStorage.deleteReservation(currentUserId)
+        }
     }
 
     fun scheduleReminder(reservationTime: LocalDateTime) {
@@ -67,9 +74,8 @@ class ReservationViewModel(private val appStorage: AppStorage) : ViewModel() {
     fun saveReservation(reservation: Reservation) {
         viewModelScope.launch {
             // Get current user ID from storage
-            val userId = appStorage.appPreferencesFlow.first().userId
-            appStorage.saveReservation(userId, reservation)
-            scheduleReminder(reservation.dateTime)
+            appStorage.saveReservation(currentUserId, reservation)
+            //scheduleReminder(reservation.dateTime)
         }
     }
 
@@ -106,17 +112,4 @@ class ReservationViewModel(private val appStorage: AppStorage) : ViewModel() {
     fun alterDate(newDate : LocalDate){
         _selectedDate.value = newDate
     }
-
-    private val _selectedReservation = MutableStateFlow<Reservation?>(null)
-    val selectedReservation: StateFlow<Reservation?> = _selectedReservation.asStateFlow()
-
-    fun setSelectedReservation(reservation: Reservation) {
-        _selectedReservation.value = reservation
-    }
-    // Add seating location
-    val selectedSeating = mutableStateOf<String?>(null)
-
-    // Add sample availability
-    val availableSeatingOptions = listOf("Main Dining", "Outdoor", "Bar", "Private Booth")
-
 }

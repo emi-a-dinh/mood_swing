@@ -24,6 +24,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.zybooks.moodswing.ui.reservations.ConfirmReservationScreen
+import com.zybooks.moodswing.ui.reservations.ReservationConfirmationScreen
+import com.zybooks.moodswing.ui.reservations.ReservationScreen
+import com.zybooks.moodswing.ui.reservations.ReservationViewModel
+import com.zybooks.moodswing.ui.reservations.ReservationViewModelFactory
 import kotlinx.serialization.Serializable
 
 sealed class Routes {

@@ -15,18 +15,19 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.zybooks.moodswing.R
+import com.zybooks.moodswing.ui.reservations.Reservation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
 
-
-data class AppPreferences (
+data class AppPreferences(
     val userId: Int = 0,
     val firstName: String = "",
     val lastName: String = "",
     val pushNotifications: Boolean = false,
-    val rewards: Int = 0
+    val rewards: Int = 0,
+    val reservation: Reservation? = null
 )
 
 class AppStorage(private val context: Context) {
@@ -59,20 +60,21 @@ class AppStorage(private val context: Context) {
             fun userFirstNameKey(userId: Int) = stringPreferencesKey("user_${userId}_first_name")
             fun userLastNameKey(userId: Int) = stringPreferencesKey("user_${userId}_last_name")
             fun userRewardsKey(userId: Int) = intPreferencesKey("user_${userId}_rewards")
+            fun userReservation(userId: Int) = stringPreferencesKey("user_${userId}_reservation")
         }
     }
 
-    suspend fun saveReservation(userId: Int, reservation: ReservationViewModel.Reservation) {
+    suspend fun saveReservation(userId: Int, reservation: Reservation) {
         context.datastore.edit { preferences ->
             val reservationData = "${reservation.diningTime}|${reservation.dateTime}|${reservation.location}|${reservation.guestCount}"
-            preferences[PreferenceKeys.CURRENT_RESERVATION] = reservationData
+            preferences[PreferenceKeys.userReservation(userId)] = reservationData
         }
     }
-
+/*
     @RequiresApi(Build.VERSION_CODES.O)
     val currentReservationFlow: Flow<ReservationViewModel.Reservation?> =
         context.datastore.data.map { preferences ->
-            preferences[PreferenceKeys.CURRENT_RESERVATION]?.let {
+            preferences[PreferenceKeys.userReservation(userId)]?.let {
                 val parts = it.split("|")
                 ReservationViewModel.Reservation(
                     diningTime = parts[0],
@@ -82,7 +84,7 @@ class AppStorage(private val context: Context) {
                 )
             }
         }
-
+*/
     @SuppressLint("ServiceCast")
     suspend fun showReservationReminder() {
         val notificationManager =
@@ -116,6 +118,7 @@ class AppStorage(private val context: Context) {
         }
 
     // Get preferences for the current user
+    @RequiresApi(Build.VERSION_CODES.O)
     val appPreferencesFlow: Flow<AppPreferences> =
         context.datastore.data.map { prefs ->
             val userId = prefs[PreferenceKeys.CURRENT_USER_ID] ?: 0
@@ -123,8 +126,16 @@ class AppStorage(private val context: Context) {
             val lastName = prefs[PreferenceKeys.userLastNameKey(userId)] ?: ""
             val pushNotifications = prefs[PreferenceKeys.PUSH_NOTIFICATIONS] ?: false
             val rewards = prefs[PreferenceKeys.userRewardsKey(userId)] ?: 0
-
-            AppPreferences(userId, firstName, lastName, pushNotifications, rewards)
+            val reservation = prefs[PreferenceKeys.userReservation(userId)]?.let {
+                val parts = it.split("|")
+                Reservation(
+                    diningTime = parts[0],
+                    dateTime = LocalDateTime.parse(parts[1]),
+                    location = parts[2],
+                    guestCount = parts[3].toInt()
+                )
+            }
+            AppPreferences(userId, firstName, lastName, pushNotifications, rewards, reservation)
         }
 
     suspend fun setCurrentUser(userId: Int) {
@@ -172,6 +183,13 @@ class AppStorage(private val context: Context) {
         context.datastore.edit { prefs ->
             prefs[PreferenceKeys.userFirstNameKey(userId)] = firstName
             prefs[PreferenceKeys.userLastNameKey(userId)] = lastName
+        }
+    }
+
+    suspend fun deleteReservation(userId: Int) {
+        context.datastore.edit { preferences ->
+            // Remove the reservation entry for this user
+            preferences.remove(PreferenceKeys.userReservation(userId))
         }
     }
 }
