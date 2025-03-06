@@ -1,5 +1,7 @@
 package com.zybooks.moodswing.ui
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,6 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 class SettingsViewModel(private val appStorage: AppStorage) : ViewModel() {
     private val _currentUserPrefs = MutableStateFlow(AppPreferences())
     val currentUserPrefs: StateFlow<AppPreferences> = _currentUserPrefs
@@ -30,7 +33,10 @@ class SettingsViewModel(private val appStorage: AppStorage) : ViewModel() {
 
     fun setPushNotificationsEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            appStorage.savePushNotifications(enabled)
+            appStorage.savePushNotifications(
+                currentUserId,
+                enabled
+            )
         }
     }
 

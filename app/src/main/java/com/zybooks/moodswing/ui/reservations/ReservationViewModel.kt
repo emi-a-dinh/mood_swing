@@ -1,12 +1,15 @@
 package com.zybooks.moodswing.ui.reservations
 
+import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.zybooks.moodswing.ui.AppPreferences
 import com.zybooks.moodswing.ui.AppStorage
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,9 +19,15 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
+
 
 @RequiresApi(Build.VERSION_CODES.O)
-class ReservationViewModel(private val appStorage: AppStorage) : ViewModel() {
+class ReservationViewModel(
+    private val appStorage: AppStorage,
+    private val application: Application // Add application context
+) : ViewModel() {
 
     private val _currentUserPrefs = MutableStateFlow(AppPreferences())
     val currentUserPrefs: StateFlow<AppPreferences> = _currentUserPrefs
@@ -38,23 +47,36 @@ class ReservationViewModel(private val appStorage: AppStorage) : ViewModel() {
         }
     }
 
+    // In ReservationViewModel
     fun scheduleReminder(reservationTime: LocalDateTime) {
         viewModelScope.launch {
-            val reminderTime = reservationTime
-                .minusMinutes(30)
-                .atZone(ZoneId.systemDefault())
-                .toInstant().
-                toEpochMilli()
+            val workRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
+                .setInitialDelay(
+                    calculateReminderDelay(reservationTime),
+                    TimeUnit.SECONDS
+                )
+                .setInputData(
+                    workDataOf(
+                        ReminderWorker.KEY_RESERVATION_TIME to
+                                reservationTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                    )
+                )
+                .build()
 
-            // Calculate 30 minutes before reservation
-            val delayMillis = reminderTime - System.currentTimeMillis()
-
-            if (delayMillis > 0) {
-                delay(delayMillis)
-                appStorage.showReservationReminder()
-            }
+            WorkManager.getInstance(application).enqueue(workRequest)
         }
     }
+
+    private fun calculateReminderDelay(reservationTime: LocalDateTime): Long {
+        val reminderTime = reservationTime.minusMinutes(30)
+        return reminderTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() -
+                System.currentTimeMillis()
+    }
+
+
+
+
+
     private val baseDate = LocalDateTime.now()
 
     private val _availableReservation = MutableStateFlow(listOf(
@@ -75,7 +97,7 @@ class ReservationViewModel(private val appStorage: AppStorage) : ViewModel() {
         viewModelScope.launch {
             // Get current user ID from storage
             appStorage.saveReservation(currentUserId, reservation)
-            //scheduleReminder(reservation.dateTime)
+            scheduleReminder(reservation.dateTime)
         }
     }
 

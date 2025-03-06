@@ -89,7 +89,10 @@ fun ReservationScreen(viewModel: ReservationViewModel, navController: NavControl
             )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
-                modifier = Modifier.fillMaxWidth().height(85.dp).padding(start = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(85.dp)
+                    .padding(start = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item{
@@ -233,12 +236,6 @@ fun GuestCounter(guestCount: Int, alterGuestCount: (Int) -> Unit) {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun parseTime(time: String): LocalTime {
-    val formatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH)
-    return LocalTime.parse(time, formatter)
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AvailableTimesSection(viewModel: ReservationViewModel, navController: NavController) {
     val availableReservations by viewModel.availableReservation.collectAsState()
@@ -251,7 +248,6 @@ fun AvailableTimesSection(viewModel: ReservationViewModel, navController: NavCon
         val isTimeMatch = reservation.dateTime.toLocalTime() >= selectedTime
         val isDiningTypeMatch = selectedDiningType == "All Day" ||
                 reservation.diningTime == selectedDiningType
-
         isDateMatch && isTimeMatch && isDiningTypeMatch
     }
 
@@ -282,12 +278,13 @@ fun TimeCard(reservation: Reservation, viewModel: ReservationViewModel, navContr
     OutlinedButton(
         onClick = {
             viewModel.saveReservation(reservation)
-            //viewModel.scheduleReminder(reservation.dateTime)
             navController.navigate("confirm_reservation")
         },
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(1.dp, Color.Gray),
-        modifier = Modifier.padding(4.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(4.dp)
+            .fillMaxWidth()
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = reservation.displayTime, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)

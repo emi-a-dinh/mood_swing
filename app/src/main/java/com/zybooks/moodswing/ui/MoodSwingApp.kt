@@ -2,6 +2,7 @@ package com.zybooks.moodswing.ui
 
 import EditProfileScreen
 import android.annotation.SuppressLint
+import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
@@ -68,6 +69,7 @@ fun MoodSwingApp(appStorage: AppStorage) {
     val context = LocalContext.current
 
 
+
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("MoodSwing Restaurant") })
@@ -109,12 +111,18 @@ fun MoodSwingApp(appStorage: AppStorage) {
             }
 // In MoodSwingApp.kt
             composable<Routes.Reservation> {
-                val viewModel = viewModel<ReservationViewModel>(factory = ReservationViewModelFactory(appStorage))
+                val viewModel = viewModel<ReservationViewModel>(factory = ReservationViewModelFactory(
+                    appStorage = appStorage,
+                    application = context.applicationContext as Application
+                ))
                 ReservationScreen(viewModel, navController)
             }
 
             composable("confirm_reservation") {
-                val viewModel = viewModel<ReservationViewModel>(factory = ReservationViewModelFactory(appStorage))
+                val viewModel = viewModel<ReservationViewModel>(factory = ReservationViewModelFactory(
+                    appStorage = appStorage,
+                    application = context.applicationContext as Application
+                ))
                 ConfirmReservationScreen(viewModel, navController)
             }
 

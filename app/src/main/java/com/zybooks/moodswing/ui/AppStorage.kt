@@ -1,12 +1,10 @@
 package com.zybooks.moodswing.ui
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -18,7 +16,6 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import com.zybooks.moodswing.R
 import com.zybooks.moodswing.ui.reservations.Reservation
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
 
@@ -47,7 +44,6 @@ class AppStorage(private val context: Context) {
                 ).apply {
                     description = "Reminders for upcoming reservations"
                 }
-
                 context.getSystemService(NotificationManager::class.java)
                     ?.createNotificationChannel(channel)
             }
@@ -55,16 +51,16 @@ class AppStorage(private val context: Context) {
 
         private object PreferenceKeys {
             val CURRENT_USER_ID = intPreferencesKey("current_user_id")
-            val PUSH_NOTIFICATIONS = booleanPreferencesKey("push_notifications")
-            val CURRENT_RESERVATION = stringPreferencesKey("current_reservation")
 
             fun userFirstNameKey(userId: Int) = stringPreferencesKey("user_${userId}_first_name")
             fun userLastNameKey(userId: Int) = stringPreferencesKey("user_${userId}_last_name")
             fun userRewardsKey(userId: Int) = intPreferencesKey("user_${userId}_rewards")
             fun userReservation(userId: Int) = stringPreferencesKey("user_${userId}_reservation")
+            fun userPushNotifications(userId: Int) = booleanPreferencesKey("user_${userId}_push_notifications")
             fun userPasswordKey(userId: Int) = stringPreferencesKey("user_${userId}_password")
             fun userUsernameKey(userId: Int) = stringPreferencesKey("user_${userId}_username")
-    }}
+        }
+    }
 
     suspend fun saveReservation(userId: Int, reservation: Reservation) {
         context.datastore.edit { preferences ->
@@ -72,7 +68,7 @@ class AppStorage(private val context: Context) {
             preferences[PreferenceKeys.userReservation(userId)] = reservationData
         }
     }
-
+/*
     @SuppressLint("ServiceCast")
     suspend fun showReservationReminder() {
         val notificationManager =
@@ -93,13 +89,13 @@ class AppStorage(private val context: Context) {
             notificationManager.notify(NOTIFICATION_ID, notification)
         }
     }
-
+*/
     // Get preferences for a specific user
     fun getUserPreferencesFlow(userId: Int): Flow<AppPreferences> =
         context.datastore.data.map { prefs ->
             val firstName = prefs[PreferenceKeys.userFirstNameKey(userId)] ?: ""
             val lastName = prefs[PreferenceKeys.userLastNameKey(userId)] ?: ""
-            val pushNotifications = prefs[PreferenceKeys.PUSH_NOTIFICATIONS] ?: false
+            val pushNotifications = prefs[PreferenceKeys.userPushNotifications(userId)] ?: false
             val rewards = prefs[PreferenceKeys.userRewardsKey(userId)] ?: 0
 
 
@@ -115,7 +111,7 @@ class AppStorage(private val context: Context) {
             val userId = prefs[PreferenceKeys.CURRENT_USER_ID] ?: 0
             val firstName = prefs[PreferenceKeys.userFirstNameKey(userId)] ?: ""
             val lastName = prefs[PreferenceKeys.userLastNameKey(userId)] ?: ""
-            val pushNotifications = prefs[PreferenceKeys.PUSH_NOTIFICATIONS] ?: false
+            val pushNotifications = prefs[PreferenceKeys.userPushNotifications(userId)] ?: false
             val rewards = prefs[PreferenceKeys.userRewardsKey(userId)] ?: 0
             val password = prefs[PreferenceKeys.userPasswordKey(userId)] ?: ""
             val reservation = prefs[PreferenceKeys.userReservation(userId)]?.let {
@@ -154,9 +150,9 @@ class AppStorage(private val context: Context) {
         }
     }
 
-    suspend fun savePushNotifications(enabled: Boolean) {
+    suspend fun savePushNotifications(userId: Int, enabled: Boolean) {
         context.datastore.edit { prefs ->
-            prefs[PreferenceKeys.PUSH_NOTIFICATIONS] = enabled
+            prefs[PreferenceKeys.userPushNotifications(userId)] = enabled
         }
     }
 
