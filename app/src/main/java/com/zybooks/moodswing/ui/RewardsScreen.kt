@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,7 +41,7 @@ fun RewardsScreen(viewModel: RewardsViewModel) {
         Spacer(modifier = Modifier.padding(top = 32.dp))
         RewardSteakCard(progress)
 
-        // Add buttons to test functionality
+
         Button(
             onClick = { viewModel.addReward() },
             modifier = Modifier.padding(16.dp)
@@ -110,10 +111,15 @@ fun RewardProgressCircle(progress : Float){
                 text = "${(progress * 10).toInt()} / 10 ",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.Black,
+
             )
-            Text(
-                text = if (progress < .5f) "Keep going!" else "You've almost earned a reward"
+            Text(textAlign = TextAlign.Center,
+                text = (
+                        if (progress == 1f){
+                    "You did it! Reserve an \n appointment for your free steak!" }
+                        else if (progress > .5f) {"\"Keep going!\""}
+                        else {"You've almost earned a reward"})
             )
         }
     }

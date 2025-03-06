@@ -4,7 +4,7 @@ package com.zybooks.moodswing.ui
 import androidx.compose.runtime.mutableStateOf
 
 class SignUpViewModel (private val appStorage: AppStorage){
-    // Input fields
+
     val username = mutableStateOf("")
     val password = mutableStateOf("")
     val firstName = mutableStateOf("")
@@ -18,14 +18,14 @@ class SignUpViewModel (private val appStorage: AppStorage){
     suspend fun createUser() {
         isLoading.value = true
         try {
-            // Validate input
+
             if (firstName.value.isBlank() || lastName.value.isBlank() ||
                 password.value.isBlank() || username.value.isBlank()) {
                 errorMessage.value = "All fields are required"
                 return
             }
 
-            // Password strength check
+
             if (password.value.length < 8) {
                 errorMessage.value = "Password must be at least 8 characters"
                 return
@@ -51,8 +51,8 @@ class SignUpViewModel (private val appStorage: AppStorage){
     private suspend fun generateUserId(): Int {
         var userId: Int
         do {
-            userId = (0..999999).random() // Generate a random user ID
-        } while (appStorage.getUserIdExists(userId)) // Keep generating until unique
+            userId = (0..999999).random()
+        } while (appStorage.getUserIdExists(userId))
         return userId
     }
 

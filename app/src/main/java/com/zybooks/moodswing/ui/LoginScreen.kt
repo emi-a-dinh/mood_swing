@@ -1,9 +1,6 @@
 package com.zybooks.moodswing.ui
 
 
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -11,11 +8,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -25,23 +20,17 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.zybooks.moodswing.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 
 
 @Composable
@@ -49,7 +38,9 @@ fun LoginScreen(viewModel: LoginViewModel, nav : NavController){
     val coroutineScope = rememberCoroutineScope()
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize().background(Color(0xFF2E0000),),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF2E0000),),
     ){
         Spacer(modifier = Modifier.padding(32.dp))
         Image(
@@ -131,28 +122,29 @@ fun LoginFields(viewModel: LoginViewModel, nav: NavController, coroutineScope: C
         Spacer(modifier = Modifier.height(16.dp))
 
 
-        // Login Button
         Button(
-            onClick = { coroutineScope.launch {
-                viewModel.login()
-            }},
+            onClick = { coroutineScope.launch { viewModel.login() }},
             enabled = !isLoading,
             modifier = Modifier.width(150.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(25.dp),
-                    strokeWidth = 8.dp,
-                    color = androidx.compose.ui.graphics.Color.Green,
-
-                )
-            } else {
-                Text("Login", color = Color.Black)
+            if (isLoading){
+                Text("Loading...", color = MaterialTheme.colorScheme.secondary)
             }
+            else{
+            Text("Login", color = Color.Black)}
+
         }
+
+
+
+
+
     }
 
 }
+
+
+
 
 

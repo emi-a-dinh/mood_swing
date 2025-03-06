@@ -1,8 +1,5 @@
 package com.zybooks.moodswing.ui
 
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -12,11 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -26,8 +21,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.relay.compose.RelayContainerArrangement
 import com.zybooks.moodswing.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -79,15 +71,6 @@ fun SignUpFields(viewModel: SignUpViewModel, coroutineScope: CoroutineScope, nav
     val isLoading by viewModel.isLoading
     val errorMessage by viewModel.errorMessage
     val loginSuccess by viewModel.loginSuccess
-
-    var progress by remember { mutableFloatStateOf(1f) }
-    val progressAnimate by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = tween(
-            durationMillis = 300,//animation duration
-            delayMillis = 50,//delay before animation start
-            easing = LinearOutSlowInEasing
-        ))
 
 
     if (loginSuccess) {
@@ -164,27 +147,21 @@ fun SignUpFields(viewModel: SignUpViewModel, coroutineScope: CoroutineScope, nav
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Login Button
+
         Button(
-            onClick = { coroutineScope.launch {
-                viewModel.createUser()
-            }},
+            onClick = { coroutineScope.launch { viewModel.createUser() }},
             enabled = !isLoading,
             modifier = Modifier.width(150.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    progress = {
-                        progressAnimate
-                    },
-                    modifier = Modifier.size(24.dp),
-                    color = Color.Blue,
-                )
-            } else {
-                Text("Sign Up", color = Color.Black)
+            if (isLoading){
+                Text("Loading...", color = MaterialTheme.colorScheme.secondary)
             }
+            else{
+                Text("Sign Up", color = Color.Black)}
+
         }
+
     }
 
 }

@@ -3,11 +3,11 @@ package com.zybooks.moodswing.ui
 import androidx.compose.runtime.mutableStateOf
 
 class LoginViewModel(private val appStorage: AppStorage){
-    // Input fields
+
     val username = mutableStateOf("")
     val password = mutableStateOf("")
 
-    // State management
+
     val isLoading = mutableStateOf(false)
     val errorMessage = mutableStateOf<String?>(null)
     val loginSuccess = mutableStateOf(false)
@@ -16,7 +16,7 @@ class LoginViewModel(private val appStorage: AppStorage){
         isLoading.value = true
 
         try {
-            // Validate input
+
             if (username.value.isBlank() || password.value.isBlank()){
                 errorMessage.value = "All fields are required"
                 return

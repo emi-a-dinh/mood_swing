@@ -15,7 +15,6 @@ class SettingsViewModel(private val appStorage: AppStorage) : ViewModel() {
     val currentUserPrefs: StateFlow<AppPreferences> = _currentUserPrefs
     private val currentUserId get() = _currentUserPrefs.value.userId
 
-    // Push notifications (global setting)
     val pushNotificationsEnabled: StateFlow<Boolean> =
         _currentUserPrefs.map { it.pushNotifications }.stateIn(
             viewModelScope, SharingStarted.WhileSubscribed(), false

@@ -44,22 +44,22 @@ fun SettingsScreen(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Profile Section
+
         ProfileSection(firstName = userPrefs.firstName, lastName = userPrefs.lastName)
 
-        // Account Settings Section
+
         Text("Account Settings", style = MaterialTheme.typography.titleMedium)
         SettingsItem(title = "Edit profile", onClick = onEditProfileClick)
         SettingsItem(title = "Change password", onClick = { /* TODO */ })
 
-        // Toggles Section
+
         SwitchSetting(
             title = "Push notifications",
             checked = pushNotificationsEnabled,
             onCheckedChange = { viewModel.setPushNotificationsEnabled(it) }
         )
 
-        // Legal Section
+
         SettingsItem(title = "About us", onClick = { /* TODO */ })
         SettingsItem(title = "Privacy policy", onClick = { /* TODO */ })
         SettingsItem(title = "Terms and conditions", onClick = { /* TODO */ })
