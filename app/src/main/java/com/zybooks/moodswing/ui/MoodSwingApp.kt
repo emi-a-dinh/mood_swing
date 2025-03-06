@@ -64,10 +64,10 @@ enum class AppScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun MoodSwingApp() {
+fun MoodSwingApp(appStorage: AppStorage) {
     val navController = rememberNavController()
     val context = LocalContext.current
-    val appStorage = remember { AppStorage(context) }
+
 
     Scaffold(
         topBar = {

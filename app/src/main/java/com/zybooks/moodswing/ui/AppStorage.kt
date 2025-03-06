@@ -14,6 +14,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import at.favre.lib.crypto.bcrypt.BCrypt
 import com.zybooks.moodswing.R
 import com.zybooks.moodswing.ui.reservations.Reservation
 import kotlinx.coroutines.flow.Flow
@@ -27,7 +28,7 @@ data class AppPreferences(
     val lastName: String = "",
     val pushNotifications: Boolean = false,
     val rewards: Int = 0,
-    val reservation: Reservation? = null
+    val reservation: Reservation? = null,
 )
 
 class AppStorage(private val context: Context) {
@@ -61,8 +62,9 @@ class AppStorage(private val context: Context) {
             fun userLastNameKey(userId: Int) = stringPreferencesKey("user_${userId}_last_name")
             fun userRewardsKey(userId: Int) = intPreferencesKey("user_${userId}_rewards")
             fun userReservation(userId: Int) = stringPreferencesKey("user_${userId}_reservation")
-        }
-    }
+            fun userPasswordKey(userId: Int) = stringPreferencesKey("user_${userId}_password")
+            fun userUsernameKey(userId: Int) = stringPreferencesKey("user_${userId}_username")
+    }}
 
     suspend fun saveReservation(userId: Int, reservation: Reservation) {
         context.datastore.edit { preferences ->
@@ -70,21 +72,7 @@ class AppStorage(private val context: Context) {
             preferences[PreferenceKeys.userReservation(userId)] = reservationData
         }
     }
-/*
-    @RequiresApi(Build.VERSION_CODES.O)
-    val currentReservationFlow: Flow<ReservationViewModel.Reservation?> =
-        context.datastore.data.map { preferences ->
-            preferences[PreferenceKeys.userReservation(userId)]?.let {
-                val parts = it.split("|")
-                ReservationViewModel.Reservation(
-                    diningTime = parts[0],
-                    dateTime = LocalDateTime.parse(parts[1]),
-                    location = parts[2],
-                    guestCount = parts[3].toInt()
-                )
-            }
-        }
-*/
+
     @SuppressLint("ServiceCast")
     suspend fun showReservationReminder() {
         val notificationManager =
@@ -114,8 +102,11 @@ class AppStorage(private val context: Context) {
             val pushNotifications = prefs[PreferenceKeys.PUSH_NOTIFICATIONS] ?: false
             val rewards = prefs[PreferenceKeys.userRewardsKey(userId)] ?: 0
 
+
             AppPreferences(userId, firstName, lastName, pushNotifications, rewards)
         }
+
+
 
     // Get preferences for the current user
     @RequiresApi(Build.VERSION_CODES.O)
@@ -126,6 +117,7 @@ class AppStorage(private val context: Context) {
             val lastName = prefs[PreferenceKeys.userLastNameKey(userId)] ?: ""
             val pushNotifications = prefs[PreferenceKeys.PUSH_NOTIFICATIONS] ?: false
             val rewards = prefs[PreferenceKeys.userRewardsKey(userId)] ?: 0
+            val password = prefs[PreferenceKeys.userPasswordKey(userId)] ?: ""
             val reservation = prefs[PreferenceKeys.userReservation(userId)]?.let {
                 val parts = it.split("|")
                 Reservation(
@@ -141,6 +133,12 @@ class AppStorage(private val context: Context) {
     suspend fun setCurrentUser(userId: Int) {
         context.datastore.edit { prefs ->
             prefs[PreferenceKeys.CURRENT_USER_ID] = userId
+        }
+    }
+
+    suspend fun saveUsername(userId: Int, username: String) {
+        context.datastore.edit { prefs ->
+            prefs[PreferenceKeys.userUsernameKey(userId)] = username
         }
     }
 
@@ -191,5 +189,46 @@ class AppStorage(private val context: Context) {
             // Remove the reservation entry for this user
             preferences.remove(PreferenceKeys.userReservation(userId))
         }
+    }
+
+    suspend fun savePassword(userId: Int, password: String) {
+        // Use Bcrypt to hash the password
+        val hashedPassword = BCrypt.withDefaults().hashToString(12, password.toCharArray())
+
+        context.datastore.edit { prefs ->
+            prefs[PreferenceKeys.userPasswordKey(userId)] = hashedPassword
+        }
+    }
+
+    suspend fun findUserId(username: String): Int?{
+        val preferences = context.datastore.data.first()
+
+        for (entry in preferences.asMap()) {
+            val key = entry.key
+            if (key.name.contains("user_") && key.name.contains("_username")) {
+                val storedUsername = preferences[key]?.toString()
+
+                if (storedUsername == username) {
+                    val parts = key.name.split("_")
+                    if (parts.size >= 2) {
+                        return parts[1].toIntOrNull()
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    suspend fun verifyPassword(userId: Int, inputPassword: String): Boolean {
+        val preferences = context.datastore.data.first()
+        val storedHash = preferences[PreferenceKeys.userPasswordKey(userId)] ?: return false
+
+        // Verify the provided password against the stored hash
+        return BCrypt.verifyer().verify(inputPassword.toCharArray(), storedHash).verified
+    }
+
+    suspend fun getUserIdExists(userId: Int): Boolean {
+        val preferences = context.datastore.data.first()
+        return preferences[PreferenceKeys.userFirstNameKey(userId)] != null
     }
 }

@@ -1,14 +1,15 @@
 package com.zybooks.moodswing.ui
 
-
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,84 +26,118 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.google.relay.compose.RelayContainerArrangement
 import com.zybooks.moodswing.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, nav : NavController){
+fun SignUpScreen(viewModel: SignUpViewModel, nav : NavController){
     val coroutineScope = rememberCoroutineScope()
+
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize().background(Color(0xFF2E0000),),
+        modifier = Modifier.fillMaxSize().background(Color(0xFF2E0000)),
     ){
         Spacer(modifier = Modifier.padding(32.dp))
         Image(
             painter = painterResource(R.drawable.logo),
             contentDescription = null)
         Spacer(modifier = Modifier.padding(32.dp))
-        Text("Login", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.secondary)
-        LoginFields(viewModel, nav, coroutineScope)
+        Text("Sign Up", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.secondary)
+        SignUpFields(viewModel, coroutineScope, nav)
         Spacer(modifier = Modifier.padding(16.dp))
-        Text(text = "Don't have an account?", color = Color.White)
+        Text(text = "Have an Account?", color = Color.White)
         TextButton(
-            onClick = {nav.navigate("signup")},
+            onClick = {nav.navigate("login")},
             colors = ButtonDefaults.buttonColors(contentColor = Color.White)
         ){
-            Text("Sign up")
+            Text("Login")
         }
     }
-
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginFields(viewModel: LoginViewModel, nav: NavController, coroutineScope: CoroutineScope){
+fun SignUpFields(viewModel: SignUpViewModel, coroutineScope: CoroutineScope, nav: NavController){
     var username by viewModel.username
     var password by viewModel.password
+    var firstName by viewModel.firstName
+    var lastName by viewModel.lastName
 
     val isLoading by viewModel.isLoading
     val errorMessage by viewModel.errorMessage
     val loginSuccess by viewModel.loginSuccess
 
+    var progress by remember { mutableFloatStateOf(1f) }
+    val progressAnimate by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(
+            durationMillis = 300,//animation duration
+            delayMillis = 50,//delay before animation start
+            easing = LinearOutSlowInEasing
+        ))
+
 
     if (loginSuccess) {
         LaunchedEffect(key1 = Unit) {
             nav.navigate("home") {
-                popUpTo("login") { inclusive = true }
+                popUpTo("signup") { inclusive = true }
             }
         }
     }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.width(300.dp)
     ){
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            OutlinedTextField(
+                value = firstName,
+                onValueChange = { firstName = it },
+                label = { Text("First Name") },
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    focusedLabelColor = MaterialTheme.colorScheme.secondary
+                ),
+                modifier = Modifier.weight(1f)
+            )
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = { lastName = it },
+                label = { Text("Last Name") },
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    containerColor = Color.White,
+                    focusedLabelColor = Color.White,
+                ),
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
             label = { Text("Username") },
             singleLine = true,
-            modifier = Modifier.width(300.dp),
+            modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                focusedLabelColor = MaterialTheme.colorScheme.secondary,
-
+                containerColor = Color.White,
+                focusedLabelColor = Color.White
             )
         )
 
@@ -113,11 +148,10 @@ fun LoginFields(viewModel: LoginViewModel, nav: NavController, coroutineScope: C
             onValueChange = { password = it },
             label = { Text("Password") },
             singleLine = true,
-            modifier = Modifier.width(300.dp),
+            modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                focusedLabelColor = MaterialTheme.colorScheme.secondary,
-
+                containerColor = Color.White,
+                focusedLabelColor = Color.White
             )
         )
 
@@ -128,13 +162,12 @@ fun LoginFields(viewModel: LoginViewModel, nav: NavController, coroutineScope: C
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
+        Spacer(modifier = Modifier.height(24.dp))
 
         // Login Button
         Button(
             onClick = { coroutineScope.launch {
-                viewModel.login()
+                viewModel.createUser()
             }},
             enabled = !isLoading,
             modifier = Modifier.width(150.dp),
@@ -142,13 +175,14 @@ fun LoginFields(viewModel: LoginViewModel, nav: NavController, coroutineScope: C
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(25.dp),
-                    strokeWidth = 8.dp,
-                    color = androidx.compose.ui.graphics.Color.Green,
-
+                    progress = {
+                        progressAnimate
+                    },
+                    modifier = Modifier.size(24.dp),
+                    color = Color.Blue,
                 )
             } else {
-                Text("Login", color = Color.Black)
+                Text("Sign Up", color = Color.Black)
             }
         }
     }
