@@ -1,9 +1,11 @@
-package com.zybooks.moodswing.ui
+package com.zybooks.moodswing.ui.rewards
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zybooks.moodswing.ui.AppStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -11,7 +13,6 @@ import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 class RewardsViewModel(private val appStorage: AppStorage) : ViewModel() {
-
 
     private var currentUserId = 0
     private val _rewardsCount = MutableStateFlow(0)
@@ -22,7 +23,6 @@ class RewardsViewModel(private val appStorage: AppStorage) : ViewModel() {
     val progress: StateFlow<Float> = _progress
 
     init {
-
         viewModelScope.launch {
             appStorage.appPreferencesFlow.collectLatest { preferences ->
                 currentUserId = preferences.userId
@@ -34,6 +34,7 @@ class RewardsViewModel(private val appStorage: AppStorage) : ViewModel() {
 
     fun addReward() {
         viewModelScope.launch {
+            Log.d("Rewards", "Rewards User ID: $currentUserId")
             appStorage.incrementRewards(currentUserId)
         }
     }

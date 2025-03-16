@@ -14,4 +14,5 @@ data class Reservation(val diningTime: String, val dateTime: LocalDateTime, val 
 
     val displayDate: String get() = dateTime.format(dateFormatter)
     val displayTime: String get() = dateTime.format(timeFormatter)
+    val getDateTime: LocalDateTime get() = dateTime
 }

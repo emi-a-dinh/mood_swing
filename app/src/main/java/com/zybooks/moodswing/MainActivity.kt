@@ -13,26 +13,19 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.zybooks.moodswing.ui.AppStorage
-import com.zybooks.moodswing.ui.LoginScreen
-import com.zybooks.moodswing.ui.LoginViewModel
+import com.zybooks.moodswing.ui.login.LoginScreen
+import com.zybooks.moodswing.ui.login.LoginViewModel
 import com.zybooks.moodswing.ui.MoodSwingApp
-import com.zybooks.moodswing.ui.SignUpFields
-import com.zybooks.moodswing.ui.SignUpScreen
-import com.zybooks.moodswing.ui.SignUpViewModel
+import com.zybooks.moodswing.ui.login.SignUpScreen
+import com.zybooks.moodswing.ui.login.SignUpViewModel
 import com.zybooks.moodswing.ui.theme.MoodSwingTheme
-import kotlinx.serialization.Serializable
-
 
 
 class MainActivity : ComponentActivity() {

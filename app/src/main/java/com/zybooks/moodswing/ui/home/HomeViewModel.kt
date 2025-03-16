@@ -1,4 +1,4 @@
-package com.zybooks.moodswing.ui
+package com.zybooks.moodswing.ui.home
 
 import android.app.Notification
 import androidx.compose.runtime.mutableStateListOf

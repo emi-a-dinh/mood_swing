@@ -1,4 +1,4 @@
-package com.zybooks.moodswing.ui
+package com.zybooks.moodswing.ui.menu
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -39,15 +39,13 @@ import androidx.compose.ui.unit.sp
 fun MenuScreen(viewModel: MenuViewModel) {
     val menuItems by viewModel.menuItems.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
-
     val filteredMenuItems = menuItems.filter { it.menu_type == selectedCategory }
-
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item{CategorySelector(viewModel)}
+        item{ CategorySelector(viewModel) }
     item{
         Spacer(modifier = Modifier.height(16.dp))
         HorizontalDivider(
@@ -67,8 +65,6 @@ fun MenuScreen(viewModel: MenuViewModel) {
             item -> MenuCard(item.imageId, item_name = item.name, item_desc = item.description)
             Spacer(modifier = Modifier.height(16.dp))
         }
-
-
     }
 
 

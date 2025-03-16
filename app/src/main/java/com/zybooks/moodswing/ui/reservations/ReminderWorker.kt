@@ -9,6 +9,8 @@ import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.zybooks.moodswing.R
+import com.zybooks.moodswing.ui.AppStorage
+import kotlinx.coroutines.flow.first
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -26,14 +28,17 @@ class ReminderWorker(context: Context, parameters: WorkerParameters) : Coroutine
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun doWork(): Result {
         return try {
-            // Parse reservation time from input data
-            val reservationTime = LocalDateTime.parse(
-                inputData.getString(KEY_RESERVATION_TIME),
-                DateTimeFormatter.ISO_LOCAL_DATE_TIME
-            )
-
-            createNotificationChannel()
-            showReminderNotification(reservationTime)
+            val appStorage = AppStorage(applicationContext)
+            val userPrefs = appStorage.appPreferencesFlow.first()
+            if (userPrefs.pushNotifications) {
+                // Parse reservation time from input data
+                val reservationTime = LocalDateTime.parse(
+                    inputData.getString(KEY_RESERVATION_TIME),
+                    DateTimeFormatter.ISO_LOCAL_DATE_TIME
+                )
+                createNotificationChannel()
+                showReminderNotification(reservationTime)
+            }
             Result.success()
         } catch (e: Exception) {
             Result.failure()

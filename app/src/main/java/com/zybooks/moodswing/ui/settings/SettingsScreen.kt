@@ -1,5 +1,7 @@
-package com.zybooks.moodswing.ui
+package com.zybooks.moodswing.ui.settings
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,12 +30,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.zybooks.moodswing.R
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel(),
-    onEditProfileClick: () -> Unit
+    navController: NavController
 ) {
     val userPrefs by viewModel.currentUserPrefs.collectAsState()
     val pushNotificationsEnabled by viewModel.pushNotificationsEnabled.collectAsState()
@@ -44,24 +48,17 @@ fun SettingsScreen(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-
         ProfileSection(firstName = userPrefs.firstName, lastName = userPrefs.lastName)
-
-
         Text("Account Settings", style = MaterialTheme.typography.titleMedium)
-        SettingsItem(title = "Edit profile", onClick = onEditProfileClick)
-        SettingsItem(title = "Change password", onClick = { /* TODO */ })
-
-
+        SettingsItem(title = "Edit profile", onClick = {navController.navigate("edit_profile")})
+        SettingsItem(title = "Change password", onClick = {navController.navigate("change_password")})
         SwitchSetting(
             title = "Push notifications",
             checked = pushNotificationsEnabled,
             onCheckedChange = { viewModel.setPushNotificationsEnabled(it) }
         )
-
-
-        SettingsItem(title = "About us", onClick = { /* TODO */ })
-        SettingsItem(title = "Privacy policy", onClick = { /* TODO */ })
+        SettingsItem(title = "About us", onClick = { navController.navigate("about_us")})
+        SettingsItem(title = "Privacy policy", onClick = { navController.navigate("privacy_policy") })
         SettingsItem(title = "Terms and conditions", onClick = { /* TODO */ })
     }
 }
@@ -87,7 +84,6 @@ fun ProfileSection(firstName: String, lastName: String) {
         }
     }
 }
-
 
 @Composable
 fun SettingsItem(title: String, onClick: () -> Unit) {

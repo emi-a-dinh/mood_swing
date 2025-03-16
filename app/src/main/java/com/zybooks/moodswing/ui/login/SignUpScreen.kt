@@ -1,11 +1,12 @@
-package com.zybooks.moodswing.ui
-
+package com.zybooks.moodswing.ui.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -34,39 +35,38 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, nav : NavController){
+fun SignUpScreen(viewModel: SignUpViewModel, nav : NavController){
     val coroutineScope = rememberCoroutineScope()
+
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF2E0000),),
+        modifier = Modifier.fillMaxSize().background(Color(0xFF2E0000)),
     ){
         Spacer(modifier = Modifier.padding(32.dp))
         Image(
             painter = painterResource(R.drawable.logo),
             contentDescription = null)
         Spacer(modifier = Modifier.padding(32.dp))
-        Text("Login", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.secondary)
-        LoginFields(viewModel, nav, coroutineScope)
+        Text("Sign Up", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.secondary)
+        SignUpFields(viewModel, coroutineScope, nav)
         Spacer(modifier = Modifier.padding(16.dp))
-        Text(text = "Don't have an account?", color = Color.White)
+        Text(text = "Have an Account?", color = Color.White)
         TextButton(
-            onClick = {nav.navigate("signup")},
+            onClick = {nav.navigate("login")},
             colors = ButtonDefaults.buttonColors(contentColor = Color.White)
         ){
-            Text("Sign up")
+            Text("Login")
         }
     }
-
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginFields(viewModel: LoginViewModel, nav: NavController, coroutineScope: CoroutineScope){
+fun SignUpFields(viewModel: SignUpViewModel, coroutineScope: CoroutineScope, nav: NavController){
     var username by viewModel.username
     var password by viewModel.password
+    var firstName by viewModel.firstName
+    var lastName by viewModel.lastName
 
     val isLoading by viewModel.isLoading
     val errorMessage by viewModel.errorMessage
@@ -76,24 +76,51 @@ fun LoginFields(viewModel: LoginViewModel, nav: NavController, coroutineScope: C
     if (loginSuccess) {
         LaunchedEffect(key1 = Unit) {
             nav.navigate("home") {
-                popUpTo("login") { inclusive = true }
+                popUpTo("signup") { inclusive = true }
             }
         }
     }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.width(300.dp)
     ){
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            OutlinedTextField(
+                value = firstName,
+                onValueChange = { firstName = it },
+                label = { Text("First Name") },
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    focusedLabelColor = MaterialTheme.colorScheme.secondary
+                ),
+                modifier = Modifier.weight(1f)
+            )
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = { lastName = it },
+                label = { Text("Last Name") },
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    containerColor = Color.White,
+                    focusedLabelColor = Color.White,
+                ),
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
             label = { Text("Username") },
             singleLine = true,
-            modifier = Modifier.width(300.dp),
+            modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                focusedLabelColor = MaterialTheme.colorScheme.secondary,
-
+                containerColor = Color.White,
+                focusedLabelColor = Color.White
             )
         )
 
@@ -104,11 +131,10 @@ fun LoginFields(viewModel: LoginViewModel, nav: NavController, coroutineScope: C
             onValueChange = { password = it },
             label = { Text("Password") },
             singleLine = true,
-            modifier = Modifier.width(300.dp),
+            modifier = Modifier.fillMaxWidth(),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                focusedLabelColor = MaterialTheme.colorScheme.secondary,
-
+                containerColor = Color.White,
+                focusedLabelColor = Color.White
             )
         )
 
@@ -119,11 +145,11 @@ fun LoginFields(viewModel: LoginViewModel, nav: NavController, coroutineScope: C
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
 
         Button(
-            onClick = { coroutineScope.launch { viewModel.login() }},
+            onClick = { coroutineScope.launch { viewModel.createUser() }},
             enabled = !isLoading,
             modifier = Modifier.width(150.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)
@@ -132,19 +158,12 @@ fun LoginFields(viewModel: LoginViewModel, nav: NavController, coroutineScope: C
                 Text("Loading...", color = MaterialTheme.colorScheme.secondary)
             }
             else{
-            Text("Login", color = Color.Black)}
+                Text("Sign Up", color = Color.Black)}
 
         }
-
-
-
-
 
     }
 
 }
-
-
-
 
 

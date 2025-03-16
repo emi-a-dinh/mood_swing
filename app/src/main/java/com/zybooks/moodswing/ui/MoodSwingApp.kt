@@ -17,18 +17,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.zybooks.moodswing.ui.home.HomeScreen
+import com.zybooks.moodswing.ui.home.HomeViewModel
+import com.zybooks.moodswing.ui.menu.MenuScreen
+import com.zybooks.moodswing.ui.menu.MenuViewModel
 import com.zybooks.moodswing.ui.reservations.ConfirmReservationScreen
 import com.zybooks.moodswing.ui.reservations.ReservationConfirmationScreen
 import com.zybooks.moodswing.ui.reservations.ReservationScreen
 import com.zybooks.moodswing.ui.reservations.ReservationViewModel
-import com.zybooks.moodswing.ui.reservations.ReservationViewModelFactory
+import com.zybooks.moodswing.ui.rewards.RewardsScreen
+import com.zybooks.moodswing.ui.rewards.RewardsViewModel
+import com.zybooks.moodswing.ui.settings.AboutUsScreen
+import com.zybooks.moodswing.ui.settings.ChangePasswordScreen
+import com.zybooks.moodswing.ui.settings.PrivacyScreen
+import com.zybooks.moodswing.ui.settings.SettingsScreen
+import com.zybooks.moodswing.ui.settings.SettingsViewModel
 import kotlinx.serialization.Serializable
 
 sealed class Routes {
@@ -67,9 +77,16 @@ enum class AppScreen(
 fun MoodSwingApp(appStorage: AppStorage) {
     val navController = rememberNavController()
     val context = LocalContext.current
-
-
-
+    val reservationViewModel = remember {
+        ReservationViewModel(
+            appStorage = appStorage,
+            application = context.applicationContext as Application
+        )
+    }
+    val settingsViewModel =
+        SettingsViewModel(
+            appStorage = appStorage,
+    )
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("MoodSwing Restaurant") })
@@ -86,50 +103,42 @@ fun MoodSwingApp(appStorage: AppStorage) {
             composable<Routes.Home> { HomeScreen(viewModel = HomeViewModel()) }
             composable<Routes.Menu> { MenuScreen(viewModel = MenuViewModel()) }
             composable<Routes.Rewards> {
-                val viewModel = viewModel<RewardsViewModel>(
-                    factory = RewardsViewModelFactory(appStorage)
+                val viewModel = RewardsViewModel(
+                    appStorage = appStorage
                 )
                 RewardsScreen(viewModel = viewModel)
             }
             composable<Routes.Settings> {
-                val viewModel = viewModel<SettingsViewModel>(
-                    factory = SettingsViewModelFactory(appStorage)
-                )
                 SettingsScreen(
-                    viewModel = viewModel,
-                    onEditProfileClick = { navController.navigate("edit_profile") }
+                    viewModel = settingsViewModel,
+                    navController = navController
                 )
             }
             composable("edit_profile") {
-                val viewModel = viewModel<SettingsViewModel>(
-                    factory = SettingsViewModelFactory(appStorage)
-                )
                 EditProfileScreen(
-                    viewModel = viewModel,
+                    viewModel = settingsViewModel,
                     onBackClick = { navController.popBackStack() }
                 )
             }
-// In MoodSwingApp.kt
+            // In MoodSwingApp.kt
             composable<Routes.Reservation> {
-                val viewModel = viewModel<ReservationViewModel>(factory = ReservationViewModelFactory(
-                    appStorage = appStorage,
-                    application = context.applicationContext as Application
-                ))
-                ReservationScreen(viewModel, navController)
+                ReservationScreen(reservationViewModel, navController)
             }
-
             composable("confirm_reservation") {
-                val viewModel = viewModel<ReservationViewModel>(factory = ReservationViewModelFactory(
-                    appStorage = appStorage,
-                    application = context.applicationContext as Application
-                ))
-                ConfirmReservationScreen(viewModel, navController)
+                ConfirmReservationScreen(reservationViewModel, navController)
             }
-
             composable("reservation_confirmed") {
                 ReservationConfirmationScreen(navController)
             }
-
+            composable("change_password") {
+                ChangePasswordScreen(settingsViewModel, onBackClick={navController.popBackStack()})
+            }
+            composable("about_us") {
+                AboutUsScreen(onBackClick={navController.popBackStack()})
+            }
+            composable("privacy_policy") {
+                PrivacyScreen(onBackClick={navController.popBackStack()})
+            }
         }
     }
 }

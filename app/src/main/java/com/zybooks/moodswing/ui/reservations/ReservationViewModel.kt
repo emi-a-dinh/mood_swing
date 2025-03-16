@@ -2,6 +2,7 @@ package com.zybooks.moodswing.ui.reservations
 
 import android.app.Application
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,7 +22,6 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 class ReservationViewModel(
@@ -73,10 +73,6 @@ class ReservationViewModel(
                 System.currentTimeMillis()
     }
 
-
-
-
-
     private val baseDate = LocalDateTime.now()
 
     private val _availableReservation = MutableStateFlow(listOf(
@@ -93,14 +89,14 @@ class ReservationViewModel(
         Reservation("Dinner", baseDate.withHour(19).withMinute(0), "Private Booth", 2) // 7 PM
     ))
 
-    fun saveReservation(reservation: Reservation) {
+    fun saveSelectedReservation() {
+        val reservation = _selectedReservation.value ?: return // safety check
         viewModelScope.launch {
-            // Get current user ID from storage
+            Log.d("Reservation", "Reservation User ID: $currentUserId")
             appStorage.saveReservation(currentUserId, reservation)
             scheduleReminder(reservation.dateTime)
         }
     }
-
     val availableReservation : StateFlow<List<Reservation>> = _availableReservation.asStateFlow()
 
     private val _diningTimes = MutableStateFlow(listOf("All Day", "Lunch", "Dinner"))
@@ -130,6 +126,13 @@ class ReservationViewModel(
 
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate : StateFlow<LocalDate> = _selectedDate.asStateFlow()
+
+    private val _selectedReservation = MutableStateFlow<Reservation?>(null)
+    val selectedReservation: StateFlow<Reservation?> = _selectedReservation.asStateFlow()
+
+    fun selectReservation(reservation: Reservation) {
+        _selectedReservation.value = reservation
+    }
 
     fun alterDate(newDate : LocalDate){
         _selectedDate.value = newDate

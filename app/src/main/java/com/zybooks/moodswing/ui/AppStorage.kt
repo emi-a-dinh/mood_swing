@@ -1,7 +1,5 @@
 package com.zybooks.moodswing.ui
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -13,9 +11,9 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import at.favre.lib.crypto.bcrypt.BCrypt
-import com.zybooks.moodswing.R
 import com.zybooks.moodswing.ui.reservations.Reservation
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
 
@@ -31,23 +29,6 @@ data class AppPreferences(
 class AppStorage(private val context: Context) {
     companion object {
         private val Context.datastore: DataStore<Preferences> by preferencesDataStore("app_storage")
-
-        private const val CHANNEL_ID_RESERVATION = "reservation_reminders"
-        private const val NOTIFICATION_ID = 100
-
-        private fun createNotificationChannel(context: Context) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val channel = NotificationChannel(
-                    CHANNEL_ID_RESERVATION,
-                    "Reservation Reminders",
-                    NotificationManager.IMPORTANCE_HIGH
-                ).apply {
-                    description = "Reminders for upcoming reservations"
-                }
-                context.getSystemService(NotificationManager::class.java)
-                    ?.createNotificationChannel(channel)
-            }
-        }
 
         private object PreferenceKeys {
             val CURRENT_USER_ID = intPreferencesKey("current_user_id")
@@ -101,8 +82,6 @@ class AppStorage(private val context: Context) {
 
             AppPreferences(userId, firstName, lastName, pushNotifications, rewards)
         }
-
-
 
     // Get preferences for the current user
     @RequiresApi(Build.VERSION_CODES.O)
@@ -198,12 +177,10 @@ class AppStorage(private val context: Context) {
 
     suspend fun findUserId(username: String): Int?{
         val preferences = context.datastore.data.first()
-
         for (entry in preferences.asMap()) {
             val key = entry.key
             if (key.name.contains("user_") && key.name.contains("_username")) {
                 val storedUsername = preferences[key]?.toString()
-
                 if (storedUsername == username) {
                     val parts = key.name.split("_")
                     if (parts.size >= 2) {
@@ -216,6 +193,7 @@ class AppStorage(private val context: Context) {
     }
 
     suspend fun verifyPassword(userId: Int, inputPassword: String): Boolean {
+
         val preferences = context.datastore.data.first()
         val storedHash = preferences[PreferenceKeys.userPasswordKey(userId)] ?: return false
 

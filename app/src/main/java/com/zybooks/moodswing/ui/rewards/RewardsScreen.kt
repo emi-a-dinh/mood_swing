@@ -1,5 +1,7 @@
-package com.zybooks.moodswing.ui
+package com.zybooks.moodswing.ui.rewards
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,10 +30,10 @@ import androidx.compose.ui.unit.sp
 import com.zybooks.moodswing.R
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RewardsScreen(viewModel: RewardsViewModel) {
     val progress by viewModel.progress.collectAsState()
-    val rewardsCount by viewModel.rewardsCount.collectAsState()
 
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,

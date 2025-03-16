@@ -1,4 +1,4 @@
-package com.zybooks.moodswing.ui
+package com.zybooks.moodswing.ui.menu
 
 import androidx.lifecycle.ViewModel
 import com.zybooks.moodswing.R

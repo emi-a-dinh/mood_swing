@@ -26,21 +26,22 @@ fun ConfirmReservationScreen(
     navController: NavController
 ) {
     val userPrefs by viewModel.currentUserPrefs.collectAsState()
-    val currentReservation = userPrefs.reservation
+    val selectedReservation by viewModel.selectedReservation.collectAsState()
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        currentReservation?.let {
-            // Display reservation details
-            ReservationDetailCard(it)
+        if (selectedReservation != null) {
+            ReservationDetailCard(selectedReservation!!)
             Button(
                 onClick = {
-                    viewModel.saveReservation(it)
+                    viewModel.saveSelectedReservation()
                     navController.navigate("reservation_confirmed")
                 }
             ) {
                 Text("Confirm Reservation")
             }
-        } ?: Text("No reservation selected", color = Color.Gray)
+        } else {
+            Text("No reservation selected", color = Color.Gray)
+        }
     }
 }
 @Composable

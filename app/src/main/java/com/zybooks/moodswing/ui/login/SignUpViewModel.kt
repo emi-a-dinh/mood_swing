@@ -1,7 +1,9 @@
-package com.zybooks.moodswing.ui
+package com.zybooks.moodswing.ui.login
 
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import com.zybooks.moodswing.ui.AppStorage
 
 class SignUpViewModel (private val appStorage: AppStorage){
 
@@ -32,6 +34,7 @@ class SignUpViewModel (private val appStorage: AppStorage){
             }
 
             val userId = generateUserId()
+            Log.d("Sign Up", "Sign Up User ID: $userId")
             appStorage.setCurrentUser(userId)
             appStorage.saveFirstName(userId, firstName.value)
             appStorage.saveLastName(userId, lastName.value)
@@ -46,7 +49,6 @@ class SignUpViewModel (private val appStorage: AppStorage){
             isLoading.value = false
         }
     }
-
 
     private suspend fun generateUserId(): Int {
         var userId: Int

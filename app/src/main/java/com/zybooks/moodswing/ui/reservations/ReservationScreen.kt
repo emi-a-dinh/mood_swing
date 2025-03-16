@@ -277,7 +277,7 @@ fun AvailableTimesSection(viewModel: ReservationViewModel, navController: NavCon
 fun TimeCard(reservation: Reservation, viewModel: ReservationViewModel, navController: NavController) {
     OutlinedButton(
         onClick = {
-            viewModel.saveReservation(reservation)
+            viewModel.selectReservation(reservation)
             navController.navigate("confirm_reservation")
         },
         shape = RoundedCornerShape(8.dp),
